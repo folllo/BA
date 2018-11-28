@@ -1,14 +1,5 @@
 from math import sqrt
 
-testPuzzle3x3 = 	[1,2,3,
-		4,6,5,
-		7,8,0]
-
-testPuzzle4x4 = [1,2,3,4,
-	  			5,6,7,8,
-	  			15,0,11,12,
-	  			13,14,9,10]
-
 def calcInversions(puzzle):
 	invCount = 0
 	arrLen = len(puzzle)
@@ -22,22 +13,21 @@ def calcInversions(puzzle):
 def validatePuzzle(puzzle):
 	dim = int(sqrt(len(puzzle)))
 	numberOfInversions = calcInversions(puzzle)
+	#True if the dimension of the puzzle is odd and the number of inversions is even.
 	if dim%2 == 1:
-		#print("The puzzles Dimension is Odd")
 		if(numberOfInversions%2==0):
 			return True
 		else:
 			return False
+	#True if dimension of the puzzle is even, the blank tile is on an odd row counted from the bottom and the number of inversions is even.
 	else:
 		if(int(puzzle.index(0)/4)%2)==1:
-			#print("The puzzles dimension is even and its blank is in an odd row")
 			if(numberOfInversions%2==0):
 				return True
 			else:
 				return False
-
+		#True if dimension of the puzzle is even, the blank tile is on an even row counted from the bottom and the number of inversions is odd.
 		else:
-			#print("The puzzles dimension is even and its blank is in an even row")
 			if(numberOfInversions%2==1):
 				return True
 			else:
