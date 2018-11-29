@@ -7,38 +7,42 @@
 	</head>
 	<body>
 		<header>
-			<h1>Sliding Puzzle</h1>
+			<div class="topnav">
+				<div id="reset" class="navbtn" >Shuffle</div>
+				<div id="puzzlesize" class="navbtn" >3x3</div>
+				<div id="difficulty" class="navbtn" >Easy</div>	
+			</div>
 		</header>
-		<div class="board">
-			<div id="t0" class="empty-tile">
+		<div id="board" class="board">
+			<div id="t0" class="empty-tile-3x3">
 				<span class="label">0</span>
 			</div>
-			<div id="t1" class="tile">
+			<div id="t1" class="tile-3x3">
 				<span class="label">1</span>
 			</div>
-			<div id="t2" class="tile">
+			<div id="t2" class="tile-3x3">
 				<span class="label">2</span>
 			</div>
-			<div id="t3" class="tile">
+			<div id="t3" class="tile-3x3">
 				<span class="label">3</span>
 			</div>
-			<div id="t4" class="tile">
+			<div id="t4" class="tile-3x3">
 				<span class="label">4</span>
 			</div>
-			<div id="t5" class="tile">
+			<div id="t5" class="tile-3x3">
 				<span class="label">5</span>
 			</div>
-			<div id="t6" class="tile">
+			<div id="t6" class="tile-3x3">
 				<span class="label">6</span>
 			</div>
-			<div id="t7" class="tile">
+			<div id="t7" class="tile-3x3">
 				<span class="label">7</span>
 			</div>
-			<div id="t8" class="tile">
+			<div id="t8" class="tile-3x3">
 				<span class="label">8</span>
 			</div>
 		</div>
 		<p id="action-message">Make your move</p>
-		<!--<script src="app.js" charset="utf-8"></script>-->
+		<script src="app.js" charset="utf-8"></script>
 	</body>
 </html>
