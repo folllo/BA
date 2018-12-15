@@ -62,7 +62,8 @@ function validateMove(tileId, state) {
 }
 
 function validateState(state) {
-
+  return true;
+  //TODO: implement state checker.
 }
 
 function move(element) {
@@ -122,6 +123,10 @@ $(function(){
   // shuffles the board
   $("#reset").on("click", function(){
     shuffle();
+    while(!validateState(getState())){
+      shuffle();
+    }
+
   })
 
 });
