@@ -47,8 +47,6 @@ function validateMove(tileId, state) {
       position = i;
     }
   }
-  console.log("pos: "+ position + "\nstate: " + state+ "\ndim: " + dimension);
-
   if (parseInt(state[position+dimension]) == 0){
     return true;
   } else if (parseInt(state[position+1]) == 0 && position%dimension != (dimension-1)) {
@@ -61,9 +59,56 @@ function validateMove(tileId, state) {
   return false;
 }
 
-function validateState(state) {
-  return true;
-  //TODO: implement state checker.
+function validateState() {
+  var state = getState();
+  var intState = [];
+  var x = 0;
+  // convert state to array of integers
+  for (var i = 0; i < state.length; i++) {
+    intState.push(parseInt(state[i]));
+  }
+
+  var dim = Math.sqrt(state.length);
+	var numberOfInversions = calcInversions(state);
+
+  //True if the dimension of the puzzle is odd and the number of inversions is even.
+	if (dim%2 == 1){
+		if (numberOfInversions%2==0) {
+			return false;
+		} else {
+			return true;
+    }
+	//True if dimension of the puzzle is even, the blank tile is on an odd row counted from the bottom and the number of inversions is even.
+  } else {
+    if ((parseInt(state.indexOf(0)/4)%2)==1) {
+  			if (numberOfInversions%2==0) {
+  				return true;
+  			} else {
+  				return false;
+        }
+
+  		//True if dimension of the puzzle is even, the blank tile is on an even row counted from the bottom and the number of inversions is odd.
+        } else {
+    			if (numberOfInversions%2==1) {
+    				return false;
+    			} else {
+    				return true;
+          }
+        }
+  }
+}
+
+function calcInversions(state){
+	var invCount = 0;
+	var arrLen = state.length
+  for (var i = 0; i < arrLen; i++) {
+    for (var j = i+1; j < arrLen; j++) {
+      if (state[i] != 0 && state[j] != 0 && state[i]>state[j]) {
+        invCount += 1;
+      }
+    }
+  }
+  return invCount;
 }
 
 function move(element) {
@@ -123,7 +168,7 @@ $(function(){
   // shuffles the board
   $("#reset").on("click", function(){
     shuffle();
-    while(!validateState(getState())){
+    while(validateState()){
       shuffle();
     }
 
