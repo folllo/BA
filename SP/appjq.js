@@ -1,6 +1,7 @@
-function shuffle() {
+function shuffle(timerId) {
   var divs = [];
   var tmp = [];
+  $("#action-message").text("Make your move");
   $("#board > div").each(function(){
     divs.push($(this));
   });
@@ -11,7 +12,7 @@ function shuffle() {
   for (var j = 0; j < tmp.length; j++) {
     $("#board").append(tmp[j]);
   }
-  addTileEventlisteners();
+  addTileEventlisteners(timerId);
 }
 
 function fillBoard(dimension){
@@ -137,17 +138,18 @@ function move(element) {
   //check if new stat == final state
   //console.log(getState());
   //console.log("Inversions: " + calcInversions(getState()));
-  if(calcInversions(getState()) == 0 && getState().indexOf("0") == dimension*dimension-1) {
-    removeTileEventlisteners();
-    $("#action-message").text("YOU WON!");
-  }
 }
 
-function addTileEventlisteners() {
+function addTileEventlisteners(timerId) {
   $("#board > div").each(function(){
     $(this).on("click", function(){
       if(validateMove($(this).text(), getState())) {
         move($(this));
+      }
+      if(calcInversions(getState()) == 0 && getState().indexOf("0") == getState().length-1) {
+        removeTileEventlisteners();
+        $("#action-message").text("YOU WON!");
+        stopTimer(timerId);
       }
     });
   })
@@ -159,7 +161,32 @@ function removeTileEventlisteners() {
   })
 }
 
+function formatTime(n) {
+  return n > 9 ? n : "0" + n;
+}
+
+function startTimer(sec) {
+  var timerId = setInterval(function(){
+    sec += 1;
+    var timeString;
+    var minStr = formatTime(Math.floor(sec/60));
+    var secStr = formatTime(sec%60);
+    timeString = minStr + ":" + secStr;
+    //console.log("TIMER: " + timeString);
+    $('#timer').text(timeString);
+  },1000);
+
+  return timerId;
+}
+
+function stopTimer(timerId) {
+  clearInterval(timerId);
+}
+
 $(function(){
+
+  var sec = 0;
+  var timer;
 
   // Changes the text of the size button and fills the board with dim*dim tiles
   $("#puzzlesize").on("click", function(){
@@ -187,13 +214,15 @@ $(function(){
       $(this).text("Easy");
       //setDifficulty(1);
     }
+    stopTimer(timer);
   })
 
   // shuffles the board
   $("#reset").on("click", function(){
-    shuffle();
+    timer = startTimer(sec);
+    shuffle(timer);
     while(!validateState()){
-      shuffle();
+      shuffle(timer);
     }
 
   })
