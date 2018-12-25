@@ -71,16 +71,20 @@ function validateState() {
   var dim = Math.sqrt(state.length);
 	var numberOfInversions = calcInversions(state);
 
+  //console.log(intState);
+  //console.log(numberOfInversions);
+  //console.log(parseInt(intState.indexOf(0)/4)%2);
+
   //True if the dimension of the puzzle is odd and the number of inversions is even.
 	if (dim%2 == 1){
 		if (numberOfInversions%2==0) {
-			return false;
-		} else {
 			return true;
+		} else {
+			return false;
     }
 	//True if dimension of the puzzle is even, the blank tile is on an odd row counted from the bottom and the number of inversions is even.
   } else {
-    if ((parseInt(state.indexOf(0)/4)%2)==1) {
+    if ((parseInt(intState.indexOf(0)/4)%2)==1) {
   			if (numberOfInversions%2==0) {
   				return true;
   			} else {
@@ -90,9 +94,9 @@ function validateState() {
   		//True if dimension of the puzzle is even, the blank tile is on an even row counted from the bottom and the number of inversions is odd.
         } else {
     			if (numberOfInversions%2==1) {
-    				return false;
-    			} else {
     				return true;
+    			} else {
+    				return false;
           }
         }
   }
@@ -100,14 +104,21 @@ function validateState() {
 
 function calcInversions(state){
 	var invCount = 0;
-	var arrLen = state.length
+	var arrLen = state.length;
+  var intState = [];
+  // convert state to array of integers
+  for (var i = 0; i < state.length; i++) {
+    intState.push(parseInt(state[i]));
+  }
+
   for (var i = 0; i < arrLen; i++) {
     for (var j = i+1; j < arrLen; j++) {
-      if (state[i] != 0 && state[j] != 0 && state[i]>state[j]) {
+      if (intState[i] != 0 && intState[j] != 0 && intState[i]>intState[j]) {
         invCount += 1;
       }
     }
   }
+
   return invCount;
 }
 
@@ -123,6 +134,13 @@ function move(element) {
   currentTile.addClass("empty-tile-" + dimension + "x" + dimension);
   currentTile.attr("id", "t0");
   currentTile.html('<span class="label">0</span>');
+  //check if new stat == final state
+  //console.log(getState());
+  //console.log("Inversions: " + calcInversions(getState()));
+  if(calcInversions(getState()) == 0 && getState().indexOf("0") == dimension*dimension-1) {
+    removeTileEventlisteners();
+    $("#action-message").text("YOU WON!");
+  }
 }
 
 function addTileEventlisteners() {
@@ -132,6 +150,12 @@ function addTileEventlisteners() {
         move($(this));
       }
     });
+  })
+}
+
+function removeTileEventlisteners() {
+  $("#board > div").each(function(){
+    $(this).off("click");
   })
 }
 
@@ -168,7 +192,7 @@ $(function(){
   // shuffles the board
   $("#reset").on("click", function(){
     shuffle();
-    while(validateState()){
+    while(!validateState()){
       shuffle();
     }
 
