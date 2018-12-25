@@ -1,7 +1,9 @@
-function shuffle(timerId) {
+function shuffle(timerId, moveCnt) {
   var divs = [];
   var tmp = [];
   $("#action-message").text("Make your move");
+  $('#movecounter').text("Moves: 0");
+  $('#timer').text("00:00");
   $("#board > div").each(function(){
     divs.push($(this));
   });
@@ -12,7 +14,7 @@ function shuffle(timerId) {
   for (var j = 0; j < tmp.length; j++) {
     $("#board").append(tmp[j]);
   }
-  addTileEventlisteners(timerId);
+  addTileEventlisteners(timerId, moveCnt);
 }
 
 function fillBoard(dimension){
@@ -140,11 +142,13 @@ function move(element) {
   //console.log("Inversions: " + calcInversions(getState()));
 }
 
-function addTileEventlisteners(timerId) {
+function addTileEventlisteners(timerId, moveCnt) {
   $("#board > div").each(function(){
     $(this).on("click", function(){
       if(validateMove($(this).text(), getState())) {
         move($(this));
+        moveCnt += 1;
+        $('#movecounter').text("Moves: " + moveCnt);
       }
       if(calcInversions(getState()) == 0 && getState().indexOf("0") == getState().length-1) {
         removeTileEventlisteners();
@@ -187,6 +191,7 @@ $(function(){
 
   var sec = 0;
   var timer;
+  var moveCnt = 0;
 
   // Changes the text of the size button and fills the board with dim*dim tiles
   $("#puzzlesize").on("click", function(){
@@ -217,12 +222,12 @@ $(function(){
     stopTimer(timer);
   })
 
-  // shuffles the board
+  // shuffles the board TODO: fix bug with timer when shuffling multiple times
   $("#reset").on("click", function(){
     timer = startTimer(sec);
-    shuffle(timer);
+    shuffle(timer, moveCnt);
     while(!validateState()){
-      shuffle(timer);
+      shuffle(timer, moveCnt);
     }
 
   })
