@@ -1,6 +1,13 @@
-function shuffle(timerId, moveCnt) {
+// Global Variables
+var timerId;
+var moveCnt = 0;
+var sec = 0;
+
+function shuffle() {
   var divs = [];
   var tmp = [];
+  $(".board, .tile-3x3, .tile-4x4, .tile-5x5").removeClass("win-border");
+  $("#action-message").removeClass("win-color");;
   $("#action-message").text("Make your move");
   $('#movecounter').text("Moves: 0");
   $('#timer').text("00:00");
@@ -14,7 +21,7 @@ function shuffle(timerId, moveCnt) {
   for (var j = 0; j < tmp.length; j++) {
     $("#board").append(tmp[j]);
   }
-  addTileEventlisteners(timerId, moveCnt);
+  addTileEventlisteners();
 }
 
 function fillBoard(dimension){
@@ -142,7 +149,7 @@ function move(element) {
   //console.log("Inversions: " + calcInversions(getState()));
 }
 
-function addTileEventlisteners(timerId, moveCnt) {
+function addTileEventlisteners() {
   $("#board > div").each(function(){
     $(this).on("click", function(){
       if(validateMove($(this).text(), getState())) {
@@ -152,8 +159,10 @@ function addTileEventlisteners(timerId, moveCnt) {
       }
       if(calcInversions(getState()) == 0 && getState().indexOf("0") == getState().length-1) {
         removeTileEventlisteners();
+        $(".board, .tile-3x3, .tile-4x4, .tile-5x5").addClass("win-border");
+        $("#action-message").addClass("win-color");;
         $("#action-message").text("YOU WON!");
-        stopTimer(timerId);
+        stopTimer();
       }
     });
   })
@@ -170,7 +179,7 @@ function formatTime(n) {
 }
 
 function startTimer(sec) {
-  var timerId = setInterval(function(){
+  timerId = setInterval(function(){
     sec += 1;
     var timeString;
     var minStr = formatTime(Math.floor(sec/60));
@@ -179,19 +188,13 @@ function startTimer(sec) {
     //console.log("TIMER: " + timeString);
     $('#timer').text(timeString);
   },1000);
-
-  return timerId;
 }
 
-function stopTimer(timerId) {
+function stopTimer() {
   clearInterval(timerId);
 }
 
 $(function(){
-
-  var sec = 0;
-  var timer;
-  var moveCnt = 0;
 
   // Changes the text of the size button and fills the board with dim*dim tiles
   $("#puzzlesize").on("click", function(){
@@ -219,15 +222,15 @@ $(function(){
       $(this).text("Easy");
       //setDifficulty(1);
     }
-    stopTimer(timer);
   })
 
-  // shuffles the board TODO: fix bug with timer when shuffling multiple times
   $("#reset").on("click", function(){
-    timer = startTimer(sec);
-    shuffle(timer, moveCnt);
+    stopTimer();
+    startTimer(sec);
+	moveCnt = 0;
+    shuffle();
     while(!validateState()){
-      shuffle(timer, moveCnt);
+      shuffle();
     }
 
   })
