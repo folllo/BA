@@ -46,6 +46,43 @@ def isStateMatrix(stateMatrix):
         tmp = And(tmp, isState(val))
     return simplify(tmp)
 
+# generates possible Transitions from state1 to state2 for the top left corner of a given puzzle
+def topLeftTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the top right corner of a given puzzle
+def topRightTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the bottom left corner of a given puzzle
+def bottomLeftTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the bottom right corner of a given puzzle
+def bottomRightTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the top row of a given puzzle
+def topRowTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the right row of a given puzzle
+def rightRowTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the bottom row of a given puzzle
+def bottomRowTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for the left row of a given puzzle
+def leftRowTransitions(state1, state2):
+    print("TODO")
+
+# generates possible Transitions from state1 to state2 for tiles filling the middle of a given puzzle
+def fillerTransitions(state1, state2):
+    print("TODO")
+
+
 # testPrints
 #print(stateToZ3State(state, 0))
 #printStateMatrix(generateStateMatrix(9, 20))
