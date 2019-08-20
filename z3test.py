@@ -5,6 +5,7 @@ import re
 
 # Solvable test state
 state = [6,3,5,1,0,7,8,2,4]
+easyState = [1,2,3,4,8,5,7,0,6]
 finalState = [1,2,3,4,5,6,7,8,0]
 
 testState = [ Int("x_1_%s" % (i)) for i in range(9)]
@@ -230,9 +231,9 @@ def getFormula(startingstate, steps):
     tmp2 = False;
     for i in range(steps):
         tmp = And(tmp,combineTransitions(stateMatrix[i], stateMatrix[i+1], dim), isState(stateMatrix[i]))
-        tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
+        #tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
         if(i > 0):
-            tmp = And(tmp, tmp2, Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
+            tmp = And(tmp,  Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
 
 
     return simplify(tmp)
@@ -271,8 +272,9 @@ dim = int(math.sqrt(len(testState)))
 # s.add(And(stateToZ3State(state,1),isState(testState), isState(testState_2), fillerTransitions(testState, testState_2, 3)))
 # print(s.check())
 # print(s.model())
+
 start = time.time()
-s.add(getFormula(state, 200));
+s.add(getFormula(easyState, 50));
 end = time.time()
 print("Building the formula took " + str(end-start) + " seconds")
 print("Calculating solution...")
