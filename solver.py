@@ -5,16 +5,14 @@ import re
 
 # Solvable test state
 state = [6,3,5,1,0,7,8,2,4]
-stateMissing2 = [1,2,3,4,0,5,7,8,6]
-stateMissing1 = [1,2,3,4,5,0,7,8,6]
+easyState = [1,2,3,4,0,5,7,8,6]
+
 finalState = [1,2,3,4,5,6,7,8,0]
 
 testState = [ Int("x_1_%s" % (i)) for i in range(9)]
 testState_2 = [ Int("x_2_%s" % (i)) for i in range(9)]
 testState4x4 = [ Int("x_1_%s" % (i)) for i in range(16) ]
 testState4x4_2 = [ Int("x_2_%s" % (i)) for i in range(16) ]
-
-s = Solver()
 
 # generates a matrix of z3 states e.g. "x_1_0", ..., "x_1_9" with the number of states equal to the number of steps wanted
 def generateStateMatrix(stateSize, numOfSteps):
@@ -240,7 +238,7 @@ def getFormula(startingstate, steps):
 
     return simplify(And(tmp, tmp2))
 
-
+# parses a z3 solver solution to a state matrix 
 def groupSolutionStates(solutionList, dim):
     tmp = [[ 0 for j in range(dim*dim)] for i in range(int(len(solutionList)/(dim*dim)))]
     for i in range(len(solutionList)):
@@ -252,6 +250,32 @@ def groupSolutionStates(solutionList, dim):
 def parseVar(var):
     return [int(s) for s in re.findall(r'\d+', var)]
 
+def solveNpuzzle(state, steps):
+	s = Solver()
+	start = time.time()
+	s.add(getFormula(state, steps))
+	end = time.time()
+	print("Building the formula took " + str(end-start) + " seconds")
+	print("Calculating solution...")
+
+	start = time.time()
+	if(s.check() != sat):
+		end = time.time()
+		print("Checking if formula is sat took " + str(end-start) + " seconds")
+		steps += 5
+		print("Steps: " + str(steps))
+		solveNpuzzle(state, steps)
+	else:
+		start = time.time()
+		solution = s.model()
+		end = time.time()
+		print("Checking for a solution took " + str(end-start) + " seconds")
+	
+		x = groupSolutionStates(solution, 3)
+		printStateMatrix(x)
+		print(len(x))
+		print("The final state is at the index " + str(x.index(finalState)))
+
 # -------------------------------------------------------- testPrints --------------------------------------------------------
 #print(stateToZ3State(state, 0))
 #printStateMatrix(generateStateMatrix(9, 20))
@@ -260,7 +284,7 @@ def parseVar(var):
 
 #print(isStateMatrix(generateStateMatrix(9,10)))
 
-dim = int(math.sqrt(len(testState)))
+#dim = int(math.sqrt(len(testState)))
 # print(topLeftTransitions(testState, testState_2, dim))
 # print(topRightTransitions(testState, testState_2, dim))
 # print(bottomLeftTransitions(testState, testState_2, dim))
@@ -275,22 +299,4 @@ dim = int(math.sqrt(len(testState)))
 # print(s.check())
 # print(s.model())
 
-
-#start = time.time()
-
-s.add(getFormula(state, 30));
-#print("combine:", combineTransitions(stateMissing2, stateMissing1, 3))
-
-#end = time.time()
-#print("Building the formula took " + str(end-start) + " seconds")
-#print("Calculating solution...")
-#start = time.time()
-print(s.check())
-solution = s.model()
-#end = time.time()
-#print("Checking for a solution took " + str(end-start) + " seconds")
-x = groupSolutionStates(solution, 3)
-printStateMatrix(x)
-print(len(x))
-print(x.index(finalState))
-print(isFinalStateFormula(testState))
+solveNpuzzle(state, 5)
