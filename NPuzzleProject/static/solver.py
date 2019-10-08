@@ -263,7 +263,10 @@ def solveNPuzzle(state, steps):
 	if(s.check() != sat):
 		end = time.time()
 		print("Checking if formula is sat took " + str(end-start) + " seconds")
-		steps = steps*2
+		if(steps < 10):
+			steps = steps*2
+		else:
+			steps +=5
 		print("Steps: " + str(steps))
 		return solveNPuzzle(state, steps)
 	else:
@@ -276,11 +279,25 @@ def solveNPuzzle(state, steps):
 		printStateMatrix(x)
 		print(len(x))
 		print("The final state is at the index " + str(x.index(finalState)))
-		return x[1]
+		return x
 
 def getHint(state, steps):
-	x1 = solveNPuzzle(state, 1)
-	return x1[state.index('0')]
+	solutionMatrix = solveNPuzzle(state, steps)[1]
+	return solutionMatrix[state.index('0')]
+
+def getSolutionSequence(state, steps):
+	solutionMatrix = solveNPuzzle(state,steps)
+	solutionSequence = []
+	nextIndex = solutionMatrix[0].index(0);
+	arrayLength = len(solutionMatrix)
+	i = 1
+	while i < arrayLength:
+		solutionSequence.append(solutionMatrix[i][nextIndex])
+		nextIndex = solutionMatrix[i].index(0)
+		i += 1
+	print(solutionSequence)
+
+	return solutionSequence
 	
 
 # -------------------------------------------------------- testPrints --------------------------------------------------------
