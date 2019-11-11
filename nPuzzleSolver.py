@@ -5,7 +5,8 @@ import re
 
 # Solvable test state
 state = [6,3,5,1,0,7,8,2,4]
-easyState = [1,2,3,4,8,5,7,0,6]
+stateMissing2 = [1,2,3,4,0,5,7,8,6]
+stateMissing1 = [1,2,3,4,5,0,7,8,6]
 finalState = [1,2,3,4,5,6,7,8,0]
 
 testState = [ Int("x_1_%s" % (i)) for i in range(9)]
@@ -222,6 +223,7 @@ def isEqualState(state1, state2):
 def combineTransitions(state1, state2, dim):
     cornerTransitions = Or(topLeftTransitions(state1, state2, dim), topRightTransitions(state1, state2, dim), bottomLeftTransitions(state1, state2, dim), bottomRightTransitions(state1, state2, dim))
     sideTransitions = Or(topRowTransitions(state1, state2, dim), rightColumnTransitions(state1, state2, dim), bottomRowTransitions(state1, state2, dim), leftColumnTransitions(state1, state2, dim))
+    #print("corner:", cornerTransitions, "side:", sideTransitions, "filler:", fillerTransitions(state1, state2, dim))
     return simplify(Or(cornerTransitions, sideTransitions, fillerTransitions(state1, state2, dim)))
 
 def getFormula(startingstate, steps):
@@ -231,12 +233,12 @@ def getFormula(startingstate, steps):
     tmp2 = False;
     for i in range(steps):
         tmp = And(tmp,combineTransitions(stateMatrix[i], stateMatrix[i+1], dim), isState(stateMatrix[i]))
-        #tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
-        if(i > 0):
-            tmp = And(tmp,  Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
+        tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
+        #if(i > 0):
+        #tmp = And(tmp, Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
 
 
-    return simplify(tmp)
+    return simplify(And(tmp, tmp2))
 
 
 def groupSolutionStates(solutionList, dim):
@@ -273,17 +275,22 @@ dim = int(math.sqrt(len(testState)))
 # print(s.check())
 # print(s.model())
 
-start = time.time()
-s.add(getFormula(easyState, 50));
-end = time.time()
-print("Building the formula took " + str(end-start) + " seconds")
-print("Calculating solution...")
-start = time.time()
+
+#start = time.time()
+
+s.add(getFormula(state, 30));
+#print("combine:", combineTransitions(stateMissing2, stateMissing1, 3))
+
+#end = time.time()
+#print("Building the formula took " + str(end-start) + " seconds")
+#print("Calculating solution...")
+#start = time.time()
 print(s.check())
 solution = s.model()
-end = time.time()
-print("Checking for a solution took " + str(end-start) + " seconds")
+#end = time.time()
+#print("Checking for a solution took " + str(end-start) + " seconds")
 x = groupSolutionStates(solution, 3)
 printStateMatrix(x)
 print(len(x))
-print(x.index(finalState))
+print("Final state is at position " + str(x.index(finalState)))
+print(isFinalStateFormula(testState))

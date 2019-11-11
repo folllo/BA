@@ -24,7 +24,7 @@ def printPuzzle(puzzle):
 	print('')
 # takes a puzzle and returns a shuffled puzzle
 def shufflePuzzle(puzzle):
-	shuffle(puzzle)	
+	shuffle(puzzle)
 
 # returns the current index of the blank tile
 def findBlankTile(puzzle):
@@ -64,8 +64,8 @@ def moveRight(puzzle):
 		puzzle[pos_post_move] = 0
 		puzzle[pos_pre_move] = tmp
 	else:
-		print("Invalid Move")	
-	
+		print("Invalid Move")
+
 # switches the position of the blank tile with the one on its left
 def moveLeft(puzzle):
 	dim = int(sqrt(len(puzzle)))
@@ -102,7 +102,7 @@ move_count = 0
 while(RUNNING):
 
 	x = input()
-	
+
 	if(x == 'w'):
 		moveUp(state)
 	elif(x == 's'):
@@ -119,5 +119,3 @@ while(RUNNING):
 		RUNNING = 0
 		end = time.time()
 		print("Finished in ", end-start, " Seconds within ", move_count, " moves")
-
-

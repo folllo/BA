@@ -194,6 +194,9 @@ function stopTimer() {
   clearInterval(timerId);
 }
 
+function getHint() {
+}
+
 $(function(){
 
   // Changes the text of the size button and fills the board with dim*dim tiles
@@ -227,12 +230,41 @@ $(function(){
   $("#reset").on("click", function(){
     stopTimer();
     startTimer(sec);
-	moveCnt = 0;
+    moveCnt = 0;
     shuffle();
     while(!validateState()){
       shuffle();
     }
 
   })
+
+  $("#hint").on("click", function() {
+	state = getState();
+	requestUrl = "http://localhost:5000/hint?state=";
+	requestUrl = requestUrl.concat(state.toString());
+	console.log(requestUrl); 
+    $.ajax({
+		type: 'GET',
+		url: requestUrl,
+		dataType: 'text',
+		async: true,
+		success: function(data) {
+			console.log("Data: " + data)
+			tileNumber = "#t" + data;
+			move($(tileNumber));
+			moveCnt += 1;
+        	$('#movecounter').text("Moves: " + moveCnt);
+		if(calcInversions(getState()) == 0 && getState().indexOf("0") == getState().length-1) {
+				removeTileEventlisteners();
+				$(".board, .tile-3x3, .tile-4x4, .tile-5x5").addClass("win-border");
+				$("#action-message").addClass("win-color");;
+				$("#action-message").text("YOU WON!");
+				stopTimer();
+      }
+		},
+		error: function(data) { alert('failed to find hint')
+		}
+	});
+  });
 
 });

@@ -5,15 +5,15 @@ import re
 
 # Solvable test state
 state = [6,3,5,1,0,7,8,2,4]
-easyState = [1,2,3,4,8,5,7,0,6]
+easyState = [1,2,3,4,0,5,7,8,6]
+easyStrState = ['1','2','3','4','0','5','7','8','6']
+
 finalState = [1,2,3,4,5,6,7,8,0]
 
 testState = [ Int("x_1_%s" % (i)) for i in range(9)]
 testState_2 = [ Int("x_2_%s" % (i)) for i in range(9)]
 testState4x4 = [ Int("x_1_%s" % (i)) for i in range(16) ]
 testState4x4_2 = [ Int("x_2_%s" % (i)) for i in range(16) ]
-
-s = Solver()
 
 # generates a matrix of z3 states e.g. "x_1_0", ..., "x_1_9" with the number of states equal to the number of steps wanted
 def generateStateMatrix(stateSize, numOfSteps):
@@ -222,6 +222,7 @@ def isEqualState(state1, state2):
 def combineTransitions(state1, state2, dim):
     cornerTransitions = Or(topLeftTransitions(state1, state2, dim), topRightTransitions(state1, state2, dim), bottomLeftTransitions(state1, state2, dim), bottomRightTransitions(state1, state2, dim))
     sideTransitions = Or(topRowTransitions(state1, state2, dim), rightColumnTransitions(state1, state2, dim), bottomRowTransitions(state1, state2, dim), leftColumnTransitions(state1, state2, dim))
+    #print("corner:", cornerTransitions, "side:", sideTransitions, "filler:", fillerTransitions(state1, state2, dim))
     return simplify(Or(cornerTransitions, sideTransitions, fillerTransitions(state1, state2, dim)))
 
 def getFormula(startingstate, steps):
@@ -231,14 +232,14 @@ def getFormula(startingstate, steps):
     tmp2 = False;
     for i in range(steps):
         tmp = And(tmp,combineTransitions(stateMatrix[i], stateMatrix[i+1], dim), isState(stateMatrix[i]))
-        #tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
-        if(i > 0):
-            tmp = And(tmp,  Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
+        tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
+        #if(i > 0):
+        #tmp = And(tmp, Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
 
 
-    return simplify(tmp)
+    return simplify(And(tmp, tmp2))
 
-
+# parses a z3 solver solution to a state matrix
 def groupSolutionStates(solutionList, dim):
     tmp = [[ 0 for j in range(dim*dim)] for i in range(int(len(solutionList)/(dim*dim)))]
     for i in range(len(solutionList)):
@@ -250,6 +251,55 @@ def groupSolutionStates(solutionList, dim):
 def parseVar(var):
     return [int(s) for s in re.findall(r'\d+', var)]
 
+def solveNPuzzle(state, steps):
+	s = Solver()
+	start = time.time()
+	s.add(getFormula(state, steps))
+	end = time.time()
+	print("Building the formula took " + str(end-start) + " seconds")
+	print("Calculating solution...")
+
+	start = time.time()
+	if(s.check() != sat):
+		end = time.time()
+		print("Checking if formula is sat took " + str(end-start) + " seconds")
+		if(steps < 10):
+			steps = steps*2
+		else:
+			steps +=5
+		print("Steps: " + str(steps))
+		return solveNPuzzle(state, steps)
+	else:
+		start = time.time()
+		solution = s.model()
+		end = time.time()
+		print("Checking for a solution took " + str(end-start) + " seconds")
+
+		x = groupSolutionStates(solution, 3)
+		printStateMatrix(x)
+		print(len(x))
+		print("The final state is at the index " + str(x.index(finalState)))
+		return x
+
+def getHint(state, steps):
+	solutionMatrix = solveNPuzzle(state, steps)[1]
+	return solutionMatrix[state.index('0')]
+
+def getSolutionSequence(state, steps):
+	solutionMatrix = solveNPuzzle(state,steps)
+	solutionSequence = []
+	nextIndex = solutionMatrix[0].index(0);
+	arrayLength = len(solutionMatrix)
+	i = 1
+	while i < arrayLength:
+		solutionSequence.append(solutionMatrix[i][nextIndex])
+		nextIndex = solutionMatrix[i].index(0)
+		i += 1
+	print(solutionSequence)
+
+	return solutionSequence
+	
+
 # -------------------------------------------------------- testPrints --------------------------------------------------------
 #print(stateToZ3State(state, 0))
 #printStateMatrix(generateStateMatrix(9, 20))
@@ -258,7 +308,7 @@ def parseVar(var):
 
 #print(isStateMatrix(generateStateMatrix(9,10)))
 
-dim = int(math.sqrt(len(testState)))
+#dim = int(math.sqrt(len(testState)))
 # print(topLeftTransitions(testState, testState_2, dim))
 # print(topRightTransitions(testState, testState_2, dim))
 # print(bottomLeftTransitions(testState, testState_2, dim))
@@ -272,18 +322,3 @@ dim = int(math.sqrt(len(testState)))
 # s.add(And(stateToZ3State(state,1),isState(testState), isState(testState_2), fillerTransitions(testState, testState_2, 3)))
 # print(s.check())
 # print(s.model())
-
-start = time.time()
-s.add(getFormula(easyState, 50));
-end = time.time()
-print("Building the formula took " + str(end-start) + " seconds")
-print("Calculating solution...")
-start = time.time()
-print(s.check())
-solution = s.model()
-end = time.time()
-print("Checking for a solution took " + str(end-start) + " seconds")
-x = groupSolutionStates(solution, 3)
-printStateMatrix(x)
-print(len(x))
-print(x.index(finalState))
