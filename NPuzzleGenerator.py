@@ -1,7 +1,8 @@
 from math import sqrt
 from random import shuffle
-from aStarSolver import *
+from aStarImpl import *
 import numpy as np
+import time
 
 FINAL_STATE_3X3 = [1,2,3,4,5,6,7,8,0]
 FINAL_STATE_4X4 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,0]
@@ -76,19 +77,27 @@ def printPuzzle(puzzle):
 def convertOneDimArrayToNDimArray(array):
 	return np.reshape(array, (-1, int(sqrt(len(array)))))
 
-def replaceZeroWithUnderscore(array):
-	index = array.index(0)
-	array.remove(0)
-	array.insert(index, '_')
 
-state = [3,2,6,5,7,1,4,0,8]
-# state = generateNpuzzle(3)
-replaceZeroWithUnderscore(state)
-replaceZeroWithUnderscore(FINAL_STATE_3X3)
+file = open("aStarTimes.txt", "w")
 
-puz = Puzzle(3)
-puz.process(convertOneDimArrayToNDimArray(state), convertOneDimArrayToNDimArray(FINAL_STATE_3X3))
+states = generateXNPuzzles(1000, 3)
+times = []
+totalTime = 0
+goalNode = Node([1,2,3,4,5,6,7,8,0], None,0,0)
+for state in states:
+	startNode = Node(state, None, 0,0)
+	puz = Puzzle(startNode, goalNode)
+	startTime = time.time()
+	sol = puz.solve()
+	elapsedTime = time.time()-startTime
+	totalTime+=elapsedTime
+	print(elapsedTime)
+	file.write(str(elapsedTime))
+	file.write("\n")
+	times.append(elapsedTime)
 
+file.close()
+print("toalTime: ", totalTime)
 # print(FINAL_STATE_3X3)
 # B = convertOneDimArrayToNDimArray([6,3,5,1,0,7,8,2,4])
 # print(B)
