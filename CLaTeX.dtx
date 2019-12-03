@@ -1,0 +1,1406 @@
+% \iffalse meta-comment
+%
+% This file provides five classes for the computational logic group:
+% clbthesis, clmthesis, clseminar, and cltreport
+% which are used for bachelor theses, master theses, PhD theses,
+% seminar reports, and technical reports respectively as well as
+% documentation on their usage.
+% 
+% To generate the documentation and the file `CLaTeX.ins' use
+%  pdflatex CLaTeX.dtx
+%
+% To generate the class files use
+%  latex CLaTeX.ins
+%
+% \fi
+%% \CheckSum{795}
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%
+% \iffalse
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{filecontents}
+\usepackage[%
+ plainpages=false,%
+ pdfpagelabels=true,%
+ colorlinks=false,%
+ pdfborder={0 0 0},%
+]{hyperref}
+\GetFileInfo{CLaTeX.dtx}
+\newcommand*{\file}[1]{\texttt{#1}}
+\DeclareRobustCommand{\KOMAScript}{%
+ \textsf{K\kern.05em O\kern.05em%
+  M\kern.05em A\kern.1em-\kern.1em Script}%
+}
+\title{%
+ The \texttt{clbthesis}, \texttt{clmthesis}, \texttt{clpthesis},
+ \texttt{clseminar}, and \texttt{cltreport}
+ Classes\thanks{This file has version number \fileversion{} dated
+ \filedate{}.}
+}
+\author{Christian~Sternagel}
+\begin{filecontents}{clb-template.tex}
+\documentclass{clbthesis}
+% insert additional packages here e.g.,
+% \usepackage[utf8]{inputenc} % to use `Umlaute'
+% \usepackage[T1]{inputenc}   % to enable separating words including `Umlaute'
+% to typeset algorithms
+% \usepackage{algorithm}
+% \usepackage{algorithmic}
+% for documentation of packages search
+% http://ctan.org
+\begin{document}
+% BEGIN: titlepage setup ---------------------------------------------
+\title{Title}
+\mailaddress{christian.sternagel@uibk.ac.at}
+\author{Christian~Sternagel}
+\date{\today}
+% \supervisor{Dr.~Christian~Sternagel}
+\supervisors{Dr.~Christian~Sternagel\and Dr.~Harald~Zankl}
+\abstract{\input{abstract}}
+% END: titlepage setup -----------------------------------------------
+\maketitle
+\tableofcontents
+% BEGIN: content -----------------------------------------------------
+\include{content}
+% END: content -------------------------------------------------------
+% BEGIN: appendix ----------------------------------------------------
+\appendix
+\include{appendix}
+% END: appendix ------------------------------------------------------
+\end{document}
+\end{filecontents}
+
+\begin{filecontents}{clm-template.tex}
+\documentclass{clmthesis}
+% insert additional packages here e.g.,
+% to use `Umlaute'
+% \usepackage[utf8]{inputenc}
+% to typeset algorithms
+% \usepackage{algorithm}
+% \usepackage{algorithmic}
+% for documentation of packages search
+% http://ctan.org
+\begin{document}
+% BEGIN: titlepage setup ---------------------------------------------
+\title{Title}
+\plaintitle{Title}
+\mailaddress{christian.sternagel@uibk.ac.at}
+\matriculationnumber{9916795}
+\author{Christian~Sternagel}
+\plainauthor{Christian~Sternagel}
+\date{\today}
+\supervisor{Dr.~Christian~Sternagel}
+% \supervisors{Dr.~Christian~Sternagel\and Dr.~Harald~Zankl}
+\abstract{\input{abstract}}
+\acknowledgments{Thanks.}
+% END: titlepage setup -----------------------------------------------
+\maketitle
+\tableofcontents
+% BEGIN: content -----------------------------------------------------
+\include{content}
+% END: content -------------------------------------------------------
+% BEGIN: appendix ----------------------------------------------------
+\appendix
+\include{appendix}
+% END: appendix ------------------------------------------------------
+\end{document}
+\end{filecontents}
+
+\begin{filecontents}{clp-template.tex}
+\documentclass{clpthesis}
+% insert additional packages here e.g.,
+% to use `Umlaute'
+% \usepackage[utf8]{inputenc}
+% to typeset algorithms
+% \usepackage{algorithm}
+% \usepackage{algorithmic}
+% for documentation of packages search
+% http://ctan.org
+\begin{document}
+% BEGIN: titlepage setup ---------------------------------------------
+\title{Title}
+\plaintitle{Title}
+\mailaddress{christian.sternagel@uibk.ac.at}
+\degree{academic degree}
+\matriculationnumber{9916795}
+\author{Christian~Sternagel}
+\plainauthor{Christian~Sternagel}
+\date{\today}
+\supervisor{Dr.~Christian~Sternagel}
+% \supervisors{Dr.~Christian~Sternagel\and Dr.~Harald~Zankl}
+\abstract{\input{abstract}}
+\acknowledgments{Thanks.}
+% END: titlepage setup -----------------------------------------------
+\maketitle
+\tableofcontents
+% BEGIN: content -----------------------------------------------------
+\include{content}
+% END: content -------------------------------------------------------
+% BEGIN: appendix ----------------------------------------------------
+\appendix
+\include{appendix}
+% END: appendix ------------------------------------------------------
+\end{document}
+\end{filecontents}
+
+\begin{filecontents}{cls-template.tex}
+\documentclass{clseminar}
+% insert additional packages here e.g.,
+% to use `Umlaute'
+% \usepackage[utf8]{inputenc}
+% to typeset algorithms
+% \usepackage{algorithm}
+% \usepackage{algorithmic}
+% for documentation of packages search
+% http://ctan.org
+\begin{document}
+% BEGIN: titlepage setup ---------------------------------------------
+\title{Title}
+\mailaddress{christian.sternagel@uibk.ac.at}
+\author{Christian~Sternagel}
+\date{\today}
+\supervisor{Dr.~Christian~Sternagel}
+% \supervisors{Dr.~Christian~Sternagel\and Dr.~Harald~Zankl}
+\abstract{\input{abstract}}
+% END: titlepage setup -----------------------------------------------
+\maketitle
+\tableofcontents
+% BEGIN: content -----------------------------------------------------
+\include{content}
+% END: content -------------------------------------------------------
+% BEGIN: appendix ----------------------------------------------------
+\appendix
+\include{appendix}
+% END: appendix ------------------------------------------------------
+\end{document}
+\end{filecontents}
+
+\begin{filecontents}{howto.tex}
+\documentclass{howto}
+\usepackage{bold-extra}
+\usepackage{listings}
+\begin{document}
+% BEGIN: titlepage setup ---------------------------------------------
+\title{How to Write a Thesis}
+\mailaddress{Harald.Zankl@uibk.ac.at}
+\author{Harald~Zankl}
+%\date{\today}
+\date{3 December 2010}
+\abstract{
+This note gives a short description on how to write a scientific document.
+It is primarily aimed at computational logic students to ensure a uniform
+presentation of their work. It also provides some hints on structuring and
+organizing documents.}
+% END: titlepage setup -----------------------------------------------
+\maketitle
+\newpage
+\tableofcontents
+% BEGIN: content -----------------------------------------------------
+\emph{Throughout the entire document emphasized text is used as
+explanation.}
+
+\section{Introduction}
+\emph{Try to be very precise when writing the introduction. The reader
+should get an idea of what is going on in the course of the document.
+It is also the right
+place to motivate why the performed work is interesting, e.g.,}
+
+This document gives some hints on how to structure and organize a thesis.
+It does not contain explicit help on \LaTeX. For that
+issue  please refer to a short introduction in German~\cite{LAT01} or a not
+so short introduction in English~\cite{LAT02}. To ensure a uniform layout
+this note further fixes some conventions when typesetting in \LaTeX\ and
+lists some useful packages.
+
+\emph{At the end of an introduction a rough outline of the document should
+be presented.}
+
+After discussing some basic formatting guidelines in
+Section~\ref{FOR:main}, Section~\ref{GRA:main} presents a package for graph
+drawing before the focus is put on how to reference work
+by others in Section~\ref{REF:main}. Section~\ref{COM:main} briefly states
+how the last period of writing the thesis is organized before some
+concluding remarks are given in Section~\ref{CON:main}.
+
+\section{Formatting}
+\label{FOR:main}
+
+\emph{Start a section/chapter with a short overview.}
+
+This section is concerned with simple formatting guidelines. After
+recalling general rules in Section~\ref{FOR:gen}, hints for listing source
+code are discussed in Section~\ref{FOR:lis}.
+program listings
+
+\subsection{General Rules}
+\label{FOR:gen}
+Using \LaTeX\ most of the formatting task is easy or even automatic.
+Nevertheless there are some rules that have to be adopted.
+\begin{itemize}
+\item
+Always specify a caption for both figures and tables. Refer to the tables in
+the text and explain them. If you do not center figures and tables there
+should be a really good reason for not doing so!
+\item
+Headings that consist of more than one word are written capitalized. Consider
+the heading of Section~\ref{REF:main} for example.
+\end{itemize}
+
+\emph{
+Please use the dedicated environments for corollaries, definitions,
+examples, lemmas, and theorems. A short hint what follows is
+appropriate.}
+
+The next example demonstrates arithmetic over natural numbers.
+
+\begin{example}
+We have $3 + 2 = 5$ and $3 \times 2 = 5$.
+\end{example}
+
+\emph{If you reference figures and tables the first letter is always
+capitalized. The same holds for sections and chapters.}
+
+\begin{figure}[tb]
+\begin{center}
+\includegraphics[width=20mm]{logos/unilogo.pdf}
+\caption{The logo of the University of Innsbruck.}
+\label{FIG:unilogo}
+\end{center}
+\end{figure}
+
+Figure~\ref{FIG:unilogo} shows that figures (same as tables) should always
+be captioned by a full sentence (which is therefore concluded by a full
+stop).
+
+\subsection{Code Listings}
+\label{FOR:lis}
+If you include (parts of) your source code please do it similar to
+Listing~\ref{LIS:hello world} which shows a hello world program in
+\texttt{OCaml}. Aligning listings at the top or bottom of a page
+usually eases reading.
+
+%sets caml as language and puts captions at the bottom
+\lstset{language=caml,captionpos=b,%
+  basicstyle=\ttfamily,basewidth={0.5em,0.45em},keywordstyle=\bfseries}
+%sets the caption for the next listing
+\lstset{caption={Hello World program in \texttt{OCaml}.}}
+%sets label for next listing
+\lstset{label=LIS:hello world}
+\begin{table}[tb]
+\begin{lstlisting}
+let main () = Format.printf "Hello World!@\n";;
+
+main ();;
+\end{lstlisting}
+\end{table}
+A whole variety of syntax highlighting for various programming languages
+can be chosen by the \verb'\lstset' command. For further information please
+consult~\cite{LIS}.
+
+\section{Graph Drawing}
+\label{GRA:main}
+For most graphs the \texttt{XY}-pic package \cite{XY} is quite sufficient.
+More advanced graphics are managed by TiKZ. The official project site of
+this package is
+\href{http://sourceforge.net/projects/pgf}%
+ {\texttt{sourceforge.net/projects/pgf}}.
+
+\section{Referencing Work by Others}
+\label{REF:main}
+A thorough scientific work is to a high extent founded on references to
+others people's work. \BibTeX\ is a tool for such tasks. If
+you are not familiar with that tool, click
+\href{http://www.ecst.csuchico.edu/~jacobsd/bib/formats/bibtex.html}%
+{\texttt{www.ecst.csuchico.edu/\textasciitilde jacobsd/bib/formats/bibtex.html}}
+for a short explanation.
+In \BibTeX\ journal articles like~\cite{HM-IC07} are cited differently from
+conference papers like~\cite{HM-AISC04}. The difference can be seen in the
+file \texttt{biblio.bib}.
+
+\section{Coming to an End}
+\label{COM:main}
+\emph{Read this section at least twice: Once before you start with
+typesetting and once after finishing it!}
+
+After the pure writing part (the introduction (one to two pages) and the
+abstract (at most a quarter of a page) should definitely be written last!),
+make sure to use a spell checker.
+We mention \textsf{ispell}, which will suffice for
+your project. It is available from
+\url{http://www.gnu.org/software/ispell/ispell.html}.%
+\footnote{Always use a spell checker before sending a draft
+version of the thesis to your supervisor.}
+Note that spell checkers neither reveal misuse of homonyms, e.g.,
+to, too, and two nor spot all misprints, i.e., ``add''
+instead of ``and'', ``is'' instead of ``it'' and so on. Careful proof
+reading might reduce some of these typos but since one is usually immune
+against own errors, proof reading by somebody else is strongly advised.
+Search for singular/plural (especially third person singular) mistakes
+with attention.
+
+Although \LaTeX\ usually does a good job in line and page breaking, make
+sure that your tables and figures fit nicely in the text. The same holds
+for program listings, mathematical formulas, etc.
+
+Concerning the references,
+check that the way you cite them is consistent, i.e., you should not refer
+to one item by ``Proc.\ of the 7th International conference $\ldots$'' and to
+another one by ``8th Conference on $\ldots$'' and a third one by
+``Proceedings of the sixth $\ldots$''.
+
+At the very end please check the date displayed on the front page. The
+format should be $<$day$>$ $<$month$>$ $<$year$>$.
+
+\section{Conclusion}
+\label{CON:main}
+\emph{This part briefly recaptures the problem and stresses your
+contributions. This is also the right place for mentioning future
+work or related research.}
+
+This note gives a comprehensive guide for computational logic students on
+how to organize their scientific documents. In order to get started
+with \LaTeX\ some useful packages are mentioned.
+%Concerning
+%ongoing work the appendix of this document might be expanded by
+%further sections on English grammar rules.
+% END: content -------------------------------------------------------
+% BEGIN: appendix ----------------------------------------------------
+\appendix
+%
+%\section{English Grammar}
+%\emph{If you decide to write an appendix it should definitely not contain
+%explicit material directly related to the work you present. Treat it as
+%supplement information you offer your reader.}
+%
+%This section deals with mistakes a non native speaker is likely to make.
+%
+%\subsection{Adjective versus Adverb}
+%When to use an adjective and when an adverb, i.e., which one of the
+%following is correct? ``The dog barks loud.'' vs. ``The dog barks
+%loudly.''? Please quickly forget the first one since it is wrong. If
+%the word of interest refers to a noun then the adjective must be
+%used and if it refers to a verb then the adverb is correct. In the
+%example above loudly refers to the verb ``barks''. (Since it
+%corresponds to the verb it is called \emph{ad}verb.) Another
+%legal way is questioning the property, e.g., if asking ``who'' or
+%``which one''
+%applies then the adjective is correct and if ``how'' or ``in which way''
+%is appropriate then use the adverb. Consider the two sentences below as
+%further examples.
+%\begin{quote}
+%Logic is nice.
+%\newline
+%The computational logic group teaches nicely.
+%\end{quote}
+%
+%Concerning exceptions you should know to use the adjective if it refers
+%to one of: feel, sound, seem, get, grow, taste, smell.
+%
+%
+%\subsection{A versus An}
+%There is a simple rule:
+%An goes with all words that are pronounced (not written) with an open
+%sound (mostly vowels).
+%Hence
+%\begin{itemize}
+%\item
+%a computer
+%\item
+%a logician
+%\item
+%a written examination
+%\end{itemize}
+%but
+%\begin{itemize}
+%\item
+%an oral examination
+%\item
+%an hour
+%\item
+%an honor
+%\end{itemize}
+%
+%\section{Giving Talks}
+%The vast variety of already available documents on how to give a talk makes
+%it a silly exercise to redo that once more. But one item is missing in
+%all of these guides: If English is not your mother tongue then check the
+%correct pronunciation! If you are not sure how to correctly pronounce a
+%word then look it up. Most online dictionaries, e.g., Leodict
+%(\href{http://dict.leo.org}{\texttt{http://dict.leo.org}}) have features
+%to pronounce words. Some words that German speakers are likely to
+%mispronounce are:
+%\begin{itemize}
+%\item
+%variable
+%\item
+%hotel
+%\item
+%schedule
+%\item
+%psychologist
+%\end{itemize}
+%% END: appendix ------------------------------------------------------
+\end{document}
+\end{filecontents}
+
+\begin{filecontents}{biblio.bib}
+@string{aaecc = "Applicable Algebra in Engineering, Communication and
+                 Computing"}
+@string{fi    = "Fundamenta Informaticae"}
+@string{ic    = "Information and Computation"}
+@string{ipl   = "Information Processing Letters"}
+@string{jar   = "Journal of Automated Reasoning"}
+@string{jsc   = "Journal of Symbolic Computation"}
+@string{lnai  = "Lecture Notes in Artificial Intelligence"}
+@string{lncs  = "Lecture Notes in Computer Science"}
+@string{lnai  = "LNAI"}
+@string{lncs  = "LNCS"}
+@string{tcs   = "Theoretical Computer Science"}
+@string{entcs = "Electronic Notes in Theoretical Computer Science"}
+
+@article{HM-IC07,
+ author      = "N.~Hirokawa and A.~Middeldorp",
+ title       = "Tyrolean Termination Tool: Techniques and Features",
+ journal     = "Information and Computation",
+ volume      = 205,
+ number      = 4,
+ year        = 2007,
+ pages       = "474--511"
+}
+
+@inproceedings{HM-AISC04,
+ author    = "N.~Hirokawa and A.~Middeldorp",
+ title     = "Polynomial Interpretations with Negative Coefficients",
+ booktitle = "Proceedings of the 7th International Conference on 
+  Artificial Intelligence and Symbolic Mathematical Computation",
+ series    = lncs,
+ volume    = 3249,
+ year      = 2004,
+ pages     = "185--198"
+}
+
+@misc{LAT01,
+ author = "W. Schmidt and J. Knappen and H. Partl and I. Hyna",
+ title  = "{L}a{T}e{X}-{K}urzbeschreibung",
+ year   = "2003",
+ note   = "\texttt{ctan.org/tex-archive/info/german/LaTeX2e-Kurzbeschreibung}"
+}
+
+@misc{LAT02,
+ author = "T. Oetiker and H. Partl and I. Hyna and E. Schlegl",
+ title  = "The not so short introduction to {L}a{T}e{X}",
+ year   = "2007",
+ note   = "\texttt{ctan.org/tex-archive/info/lshort/english}"
+}
+
+@misc{LIS,
+ author = "C. Heinz and B. Moses",
+ title  = "The \texttt{Listings} package",
+ year   = "2007",
+ note   = "\texttt{ctan.org/tex-}
+  \texttt{archive/macros/latex/contrib/listings}"
+}
+
+@misc{XY,
+ author = "K. Rose",
+ title  = "The \texttt{XY}-pic User's Guide",
+ year   = "1999",
+ note   = "\texttt{ctan.org/tex-archive/macros/}
+  \texttt{generic/diagrams/xypic/xy/doc/xyguide.pdf}"
+}
+\end{filecontents}
+
+\begin{filecontents}{abstract.tex}
+\end{filecontents}
+
+\begin{filecontents}{content.tex}
+\end{filecontents}
+
+\begin{filecontents}{appendix.tex}
+\end{filecontents}
+
+\begin{filecontents}{CLaTeX.ins}
+\input docstrip
+
+\preamble
+
+\endpreamble
+\keepsilent
+\askforoverwritefalse
+\generate{%
+ \file{clbthesis.cls}{\from{CLaTeX.dtx}{clb}}
+ \file{clmthesis.cls}{\from{CLaTeX.dtx}{clm}}
+ \file{clpthesis.cls}{\from{CLaTeX.dtx}{clp}}
+ \file{clseminar.cls}{\from{CLaTeX.dtx}{cls}}
+ \file{cltreport.cls}{\from{CLaTeX.dtx}{clt}}
+ \file{howto.cls}{\from{CLaTeX.dtx}{howto}}
+}
+\ifToplevel{%
+ \Msg{**********************************************************************}
+ \Msg{*}
+ \Msg{* To finish the installation you have to move the following files}
+ \Msg{* into a directory searched by TeX (e.g., $HOME/texmf/tex/latex/cl)}
+ \Msg{* and run `texhash' afterwards:}
+ \Msg{*}
+ \Msg{* \space\space clbthesis.cls}
+ \Msg{* \space\space clmthesis.cls}
+ \Msg{* \space\space clpthesis.cls}
+ \Msg{* \space\space clseminar.cls}
+ \Msg{* \space\space cltreport.cls}
+ \Msg{* \space\space howto.cls}
+ \Msg{*}
+ \Msg{* To produce documentation run `CLaTeX.dtx' through pdfLaTeX.}
+ \Msg{*}
+ \Msg{* Happy TeXing}
+ \Msg{**********************************************************************}
+}
+\endbatchfile
+\end{filecontents}
+\begin{document}
+ \maketitle
+ \tableofcontents
+ \DocInput{CLaTeX.dtx}
+\end{document}
+%</driver>
+%
+% \fi
+%
+% \section{Introduction}
+% The file \file{\filename} contains everything that is needed in order to
+% generate class files for bachelor theses, master theses,
+% seminar reports, technical reports, and also documentation on
+% their usage. There are
+% three main parts. In Section~\ref{SEC:usage} the usage of
+% the provided class files is described. This is the interesting part
+% for students that want/have to write their documents using the
+% |cl|* classes. 
+% In Section~\ref{SEC:inst}
+% it is described how to install the provided classes. This can be
+% done either
+% globally (in the |$TEXMF/tex/latex/| directory; usually
+% |/usr/share/texmf/tex/latex/|) or
+% locally (by creating the directories |$HOME/texmf/tex/latex/|
+% if not already present)
+% and could therefore be interesting for both students and \TeX{}nicians.
+% In Section~\ref{SEC:impl}
+% the implementation is documented in order
+% to enable extensions, bug fixes, etc.~by other \TeX{}nicians.
+%
+% \section{Usage}
+% \label{SEC:usage}
+% For all classes use |\documentclass|\oarg{language}\marg{class}
+% where the optional \meta{language} is either
+% |english| or |german| (|english| is the default value if the
+% optional argument is omitted) and \meta{class} is one of
+% |clbthesis|, |clmthesis|, and |clseminar|.
+%
+% \subsection{Prelude}
+% Several macros are provided that should be used before issuing
+% |\maketitle| in your document. The usual
+% |\author|, |\date|, and |\title|, as well as the newly defined macros
+% |\institute| (only for master theses; to specify the institute
+% where your supervisor belongs; default: ``Department of Computer Science''), |\mailaddress| (optional),
+% |\matriculationnumber| (optional), |\abstract|, and |\supervisor|
+% (|\supervisors|). Examples
+% of their usage can be found in the respective files
+% \file{clb-template.tex}, \file{clm-template.tex},
+% and \file{cls-template.tex}.
+%
+% \subsection{Lemmas, Theorems, and Friends}
+% Several theorem environments are predefined for instant use.
+% This is done via |\begin|\marg{name} and |\end|\marg{name}
+% where \meta{name} is one of: |corollary|, |definition|,
+% |example|, |exercise|, |lemma|, |proof|, |proposition|, and |theorem|.
+%
+% \subsection{Bibliography}
+% Concerning the `bibliography' (|clbthesis| and |clmthesis|) and
+% the `references' (|clseminar|), the default setting
+% is to use the file \file{biblio.bib} (in the current directory) for
+% \BibTeX-citations (that are issued with the \cmd{\cite} command).
+% This default setting can be changed via the command
+% |\bibfile|\marg{path} where \meta{path} is the (relative or
+% absolute) path to a \file{*.bib} file (without the |.bib| extension).
+% 
+% \subsection{How to Generate a PDF?}
+% That's easy. Just type
+%
+% \medskip
+%
+% \noindent~|pdflatex| \meta{file}.tex
+%
+% \noindent~|bibtex| \meta{file}
+%
+% \noindent~|pdflatex| \meta{file}.tex
+%
+% \noindent~|pdflatex| \meta{file}.tex
+%
+% \medskip
+%
+% \noindent at the command line, where \meta{file} is the name (without
+% the |.tex| extension) of your main file.
+%
+% \subsection{Examples}
+% For bachelor theses, master theses, PhD theses, seminar reports, and
+% technical reports, use the
+% appropriate |cl*| document classes.
+% The files \file{cl*-template.tex} are examples of how one could use
+% those classes. The main setup is done in the \file{cl*-template.tex}
+% itself. It depends on three other files:
+% \begin{description}
+% \item[\file{abstract.tex}] Write a short summary of your thesis/report
+% into this file. It will occur as the `Abstract'.
+% \item[\file{content.tex}] Write the main content of your thesis/report
+% into this file using |\chapter|, |\section|, etc.~for
+% theses and |\section|, |\subsection|, etc.~for reports.
+% \item[\file{appendix.tex}] Write all chapters/sections that are useful
+% but not part of the main content into this file.
+% \end{description}
+%
+% \section{Installation}
+% \label{SEC:inst}
+% In order to install the |cl*| classes. Run
+% 
+% \medskip
+%
+% \noindent~|pdflatex| \file{CLaTeX.dtx}
+%
+% \medskip
+%
+% \noindent to generate the file \file{CLaTeX.ins}
+% (and by the way also the example files).
+% Then run
+% 
+% \medskip
+%
+% \noindent~|latex| \file{CLaTeX.ins}
+% 
+% \medskip
+%
+% \noindent to generate the class files. Those have
+% to be copied to either some directory
+% (e.g.~create a directory |cl/|) in |$TEXMF/tex/latex/|
+% or (for local installation) |$HOME/texmf/tex/latex/|.
+% After doing so run
+% 
+% \medskip
+%
+% \noindent~|texhash|
+% 
+% \medskip
+%
+% \noindent to make the \TeX{} environment aware of the new
+% classes.
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+% \label{SEC:impl}
+% \subsection{Provided Class files}
+% There are the four options |clb|, |clm|, |clp|, 
+% |cls|, and |clt| for generating the class files
+% \file{clbthesis.cls} (for bachelor theses),
+% \file{clmthesis.cls} (for master theses),
+% \file{clpthesis.cls} (for PhD theses),
+% \file{clseminar.cls} (for seminar reports), and
+% \file{cltreport.cls} (for technical reports), respectively.
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+%<clb>\ProvidesClass{clbthesis}[2007/06/25 CL bachelor theses document class]
+%<clm>\ProvidesClass{clmthesis}[2007/06/25 CL master theses document class]
+%<clp>\ProvidesClass{clpthesis}[2009/04/14 CL PhD theses document class]
+%<cls>\ProvidesClass{clseminar}[2007/06/25 CL seminar report document class]
+%<clt>\ProvidesClass{cltreport}[2007/08/14 CL technical report document class]
+%<howto>\ProvidesClass{howto}[2010/01/15 Howto write for CL]
+%    \end{macrocode}
+% \subsection{Conditionals}
+% \DescribeMacro{\@mainmattertrue}
+% \DescribeMacro{\@mainmatterfalse}
+% The conditionals \cmd{\@mainmattertrue} and \cmd{\@mainmatterfalse}
+% are used to check whether some code is in the main
+% part (after frontmatter and before backmatter) of a document. 
+%    \begin{macrocode}
+\newif\if@mainmatter\@mainmattertrue
+%    \end{macrocode}
+% The default value is \cmd{\@mainmattertrue}
+% \subsection{Base Class}
+% The generated classes are based on \KOMAScript's |scrreprt|,
+% |scrartcl| and |scrbook| classes.
+%    \begin{macrocode}
+%<clb|clm>\LoadClass[a4paper,11pt,abstract=true,twoside,numbers=noendperiod]{scrreprt}
+%<clp>\LoadClass[a4paper,11pt,abstract=true,chapterprefix,twoside,numbers=noendperiod]{scrbook}
+%<cls|clt|howto>\LoadClass[a4paper,11pt,abstract=true,twoside,numbers=noendperiod]{scrartcl}
+%    \end{macrocode}
+% The default options use DIN A4 paper, 11pt font size, the
+% title `Abstract' for the abstract, and double page printout.
+%
+% \subsection{Dependencies}
+% There are several packages on which the generated classes depend:
+%    \begin{macrocode}
+\RequirePackage{fancyhdr}
+\RequirePackage[english,ngerman]{babel}
+\RequirePackage{graphicx}
+\RequirePackage{amsmath}
+\RequirePackage{amssymb}
+\RequirePackage{amsthm}
+\RequirePackage{lmodern}
+%<clb|cls>\RequirePackage{geometry}
+\RequirePackage{microtype}
+\RequirePackage{iflang}
+\RequirePackage[%
+ bookmarks,%
+ plainpages=false,%
+ pdfpagelabels,%
+ colorlinks=false,%
+ pdfborder={0 0 0},%
+]{hyperref}
+\RequirePackage{aliascnt}
+%    \end{macrocode}
+% \subsection{Available Class Options}
+% The available options are:
+% \begin{center}
+% \begin{tabular}[t]{lll}
+% \hline
+% \textbf{Option} & \textbf{Description}               & \textbf{Default}
+% \\ \hline
+% |english|       & use english names                  & true \\
+% |german|        & use german names                   & false \\
+% |notheorems|    & no predefined theorem environments & false \\
+% \end{tabular}
+% \end{center}
+%    \begin{macrocode}
+\DeclareOption{english}{\AtBeginDocument{\selectlanguage{english}}}
+\DeclareOption{german}{\AtBeginDocument{\selectlanguage{ngerman}}}
+\newif\ifnotheorems
+\notheoremsfalse
+\DeclareOption{notheorems}{\notheoremstrue}
+\ExecuteOptions{english}
+\ProcessOptions\relax
+%    \end{macrocode}
+% \subsection{Prepare Begin of Document}
+% Every document starts with its frontmatter (roman page numbering is
+% used). Additionally an english as well as a german version of
+% \DescribeMacro{\abstractname}
+% \DescribeMacro{\ackname}
+% \cmd{\abstractname} and \cmd{\ackname} is declared.
+%    \begin{macrocode}
+\AtBeginDocument{%
+ \newcommand{\degree}[1]{\renewcommand{\degreename}{#1}}
+ \global\newbox\absbox%
+ \renewcommand\abstractname{%
+  \IfLanguageName{english}{Abstract}{Zusammenfassung (Englisch)}%
+ }
+ \newcommand\corollaryname{%
+   \IfLanguageName{english}{Corollary}{Korollar}%
+ }
+ \newcommand\examplename{%
+  \IfLanguageName{english}{Example}{Beispiel}%
+ }
+ \newcommand\exercisename{%
+   \IfLanguageName{english}{Exercise}{Aufgabe}%
+ }
+ \newcommand\ackname{%
+  \IfLanguageName{english}{Acknowledgments}{Danksagung}%
+ }
+ \definetoday
+}
+%    \end{macrocode}
+% \subsection{Macro Definitions}
+% In the following the macros provided by this file are described.
+% \DescribeMacro{today}
+% The |\today| macro is changed according to a standard date format.
+%    \begin{macrocode}
+\newcommand\definetoday{%
+ \renewcommand*\today{%
+  \IfLanguageName{english}{%
+   \number\day\space \ifcase\month\or%
+    January\or%
+    February\or%
+    March\or%
+    April\or%
+    May\or%
+    June\or%
+    July\or%
+    August\or%
+    September\or%
+    October\or%
+    November\or%
+    December\or%
+   \fi\space \number\year
+  }{%
+   \number\day.~\ifcase\month\or%
+    J\"anner\or%
+    Februar\or%
+    M\"arz\or%
+    April\or%
+    Mai\or%
+    Juni\or%
+    Juli\or%
+    August\or%
+    September\or%
+    Oktober\or%
+    November\or%
+    Dezember%
+   \fi\space \number\year
+  }%
+ }
+}
+%    \end{macrocode}
+% 
+% Before the appendix starts, the  backmatter is included.
+% In the ToC an entry for the bibliography is created
+% (here \cmd{\phantomsection} is used for compatibility reasons
+% with |hyperref|).
+%    \begin{macrocode}
+\let\@OLDappendix\appendix
+\renewcommand\appendix{%
+%<clb|clm|cls|clt|howto>\backmatter
+%<clb|clm|clp>\phantomsection{\addcontentsline{toc}{chapter}{\bibname}}
+%<cls|clt|howto>\phantomsection{\addcontentsline{toc}{section}{\bibname}}
+ \bibliographystyle{abbrv}
+ \bibliography{\@bibfile}
+ \@OLDappendix
+}
+%    \end{macrocode}
+%
+% \subsubsection{Theorem Environments}
+% \DescribeEnv{corollary}
+% \DescribeEnv{definition}
+% \DescribeEnv{example}
+% \DescribeEnv{exercise}
+% \DescribeEnv{lemma}
+% \DescribeEnv{proposition}
+% \DescribeEnv{theorem}
+% Some standard environments are set up for use.
+%
+%    \begin{macrocode}
+\ifnotheorems\relax\else
+  \theoremstyle{plain}
+  \newtheorem{corollary}{\corollaryname}[%
+%<clb|clm|clp>chapter%
+%<cls|clt|howto>section%
+]
+  \newaliascnt{lemma}{corollary}
+  \newtheorem{lemma}[lemma]{Lemma}
+  \aliascntresetthe{lemma}
+  \newaliascnt{proposition}{corollary}
+  \newtheorem{proposition}[proposition]{Proposition}
+  \aliascntresetthe{proposition}
+  \newaliascnt{theorem}{corollary}
+  \newtheorem{theorem}[theorem]{Theorem}
+  \aliascntresetthe{theorem}
+  
+  \theoremstyle{definition}
+  \newaliascnt{definition}{corollary}
+  \newtheorem{definition}[definition]{Definition}
+  \aliascntresetthe{definition}
+  \newaliascnt{example}{corollary}
+  \newtheorem{example}[example]{\examplename}
+  \aliascntresetthe{example}
+  \newaliascnt{exercise}{corollary}
+  \newtheorem{exercise}[exercise]{\exercisename}
+  \aliascntresetthe{exercise}
+
+  \newcommand{\corollaryautorefname}{\corollaryname}
+  \newcommand{\lemmaautorefname}{Lemma}
+  \newcommand{\propositionautorefname}{Proposition}
+  \renewcommand{\theoremautorefname}{Theorem}
+  \newcommand{\definitionautorefname}{Definition}
+  \newcommand{\exampleautorefname}{\examplename}
+  \newcommand{\exerciseautorefname}{\exercisename}
+\fi
+%    \end{macrocode}
+% \subsubsection{Bibliography}
+% \DescribeMacro{\@bibfile}
+% The file \cmd{\@bibfile} (without extension |.bib|) is
+% searched for bibliography entries. The default setting is
+% |biblio| (hence \file{biblio.bib} in the current
+% directory is used).
+%    \begin{macrocode}
+\newcommand\@bibfile{biblio}
+%    \end{macrocode}
+% \DescribeMacro{\bibfile}
+% The bibfile name can be set with \cmd{\bibfile}.
+%    \begin{macrocode}
+\newcommand\bibfile[1]{\renewcommand\@bibfile{#1}}
+%    \end{macrocode}
+%
+% \subsubsection{Miscellany}
+% \DescribeMacro{\plaintitle}
+% \DescribeMacro{\plainauthor}
+% For |clmthesis| and |clpthesis| the commands
+% \cmd{\plaintitle} and \cmd{\plainauthor} have to
+% be used in order to set the contents of the first
+% page correctly. Since \cmd{\title} and \cmd{\author}
+% may contain \cmd{\footnote}s and \cmd{\thanks}s,
+% those can not be used here.
+%    \begin{macrocode}
+%<*clm|clp>
+\newcommand*\@supervisor{insert the name of your supervisor}
+\global\let\@supervisors\@empty
+\newcommand*\@institute{Department of Computer Science}
+\newcommand*\institute[1]{\gdef\@institute{#1}}
+%</clm|clp>
+\newcommand*\@mailaddress\@empty
+\global\let\@matriculationnumber\@empty
+\newcommand*\mailaddress[1]{\gdef\@mailaddress{#1}}
+\newcommand*\matriculationnumber[1]{\gdef\@matriculationnumber{#1}}
+\newcommand*\@plaintitle\@empty
+\newcommand*\@plainauthor\@empty
+\newcommand*\plaintitle[1]{\gdef\@plaintitle{#1}}
+\newcommand*\plainauthor[1]{\gdef\@plainauthor{#1}}
+%    \end{macrocode}
+%
+% \DescribeMacro{\kindname}
+% The kind of document for  bachelor, master, and doctoral theses,
+% as well as seminar reports is defined in English and German.
+%    \begin{macrocode}
+%<*clb>
+\newcommand\kindname{%
+ \IfLanguageName{english}{Bachelor~Thesis}{Bachelorarbeit}%
+}
+%</clb>
+%<*clm>
+\newcommand\kindname{%
+ \IfLanguageName{english}{Master~Thesis}{Masterarbeit}%
+}
+%</clm>
+%<*clp>
+\newcommand\kindname{%
+ \IfLanguageName{english}{dissertation}{Doktorarbeit}%
+}
+%</clp>
+%<*cls>
+\newcommand\kindname{%
+ \IfLanguageName{english}{Seminar~Report}{Seminararbeit}%
+}
+%</cls>
+%<*howto>
+\newcommand\kindname{%
+ \IfLanguageName{english}{}{}%
+}
+\@ifundefined{BibTeX}
+  {\def\BibTeX{{\rmfamily B\kern-.05em%
+    \textsc{i\kern-.025em b}\kern-.08em%
+       T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}}{}
+%</howto>
+%<*clt>
+\newcommand\kindname{%
+ \IfLanguageName{english}{Technical~Report}{Technischer~Bericht}%
+}
+%</clt>
+%    \end{macrocode}
+% \DescribeMacro{\supervisorname}
+% The word `supervisor' in English and German.
+%    \begin{macrocode}
+\newcommand\supervisorname{%
+ \IfLanguageName{english}{Supervisor}{Betreuer}%
+}
+%    \end{macrocode}
+%
+% \DescribeMacro{\supervisorsname}
+% The word `supervisors' in English and German.
+%    \begin{macrocode}
+\newcommand\supervisorsname{%
+ \IfLanguageName{english}{Supervisors}{Betreuer}%
+}
+%    \end{macrocode}
+%
+% \DescribeMacro{\degreename}
+% The degree printed at the first page of a master thesis is
+% specified by \cmd{\degreename} which has as default value
+% `Master of Science'.
+%    \begin{macrocode}
+\newcommand\degreename{Master of Science}
+%    \end{macrocode}
+%
+% \DescribeMacro{\subject}
+% \DescribeMacro{\publishers}
+% \cmd{\subject} and \cmd{\publishers} are commands from
+% the \KOMAScript{} packages.
+%    \begin{macrocode}
+\subject{\kindname}
+%    \end{macrocode}
+%    \begin{macrocode}
+\newcommand{\supervisor}[1]{%
+ \def\@supervisor{#1}
+ \publishers{\textbf{\supervisorname:} #1}
+}
+\newcommand{\supervisors}[1]{%
+ \def\@supervisors{#1}
+ \publishers{\textbf{\supervisorsname:} 
+  {
+   \def\and{\\}
+   \begin{tabular}[t]{l@{}}
+   #1
+   \end{tabular}%
+  }%
+ }
+}
+%    \end{macrocode}
+% \subsubsection{Document Structure}
+% \DescribeMacro{\abstract}
+% \DescribeMacro{\acknowledgments}
+% The abstract is a short summary of the contents of the document,
+% whereas in the acknoledgment, thanks goes to people that have
+% been especially helpfull in writing the document.
+%    \begin{macrocode}
+%<*clb|clm|cls|clt|howto>
+\renewcommand\abstract[1]{%
+ \global\setbox\absbox=\hbox{#1}%
+}
+%</clb|clm|cls|clt|howto>
+%<*clp>
+\newcommand\abstract[1]{%
+ \global\setbox\absbox=\hbox{#1}%
+}
+%</clp>
+\global\let\@acknowledgments\@empty
+\newcommand\acknowledgments[1]{\def\@acknowledgments{#1}}
+%    \end{macrocode}
+% \DescribeMacro{\frontmatter}
+% \DescribeMacro{\mainmatter}
+% \DescribeMacro{\backmatter}
+% A document is separated into frontmatter, mainmatter, and backmatter.
+%    \begin{macrocode}
+%<*clb|clm>
+\newcommand*\frontmatter{%
+ \if@twoside\cleardoublepage\else\clearpage\fi
+  \@mainmatterfalse\pagenumbering{roman}%
+}
+\newcommand*\mainmatter{%
+ \if@twoside\cleardoublepage\else\clearpage\fi
+  \@mainmattertrue\pagenumbering{arabic}%
+}
+%</clb|clm>
+%<*cls|clt|howto>
+\newcommand*\frontmatter{%
+ \clearpage
+  \@mainmatterfalse\pagenumbering{roman}%
+}
+\newcommand*\mainmatter{%
+ \clearpage
+  \@mainmattertrue\pagenumbering{arabic}%
+}
+%</cls|clt|howto>
+%<clb|clm|cls|clt|howto>\newcommand*\backmatter{%
+%<clp>\renewcommand*\backmatter{%
+%<clb|clm|clp>\if@openright\cleardoublepage\else\clearpage\fi
+%<cls|clt>\clearpage
+  \@mainmatterfalse%
+}
+%    \end{macrocode}
+% \subsubsection{Titlepage}
+% \DescribeMacro{\maketitle}
+% Part of the titlepage are the logos of the University of Innsbruck
+% and of the computational logic group.
+%    \begin{macrocode}
+\renewcommand*\maketitle[1][-1]{{%
+%<*clm>
+ \setcounter{page}{#1}
+ \pagestyle{empty}
+ \begin{center}
+ {\huge\textbf{\@plaintitle}\par}
+ \vskip3em
+ {\Large\textbf{%
+  \IfLanguageName{english}{%
+   master thesis in computer science
+  }{%
+   Masterarbeit in der Studienrichtung Informatik
+  }
+ }}
+ \vskip3em
+ {\Large \IfLanguageName{english}{by}{von}}
+ \vskip3em
+ {\LARGE\textbf{\@plainauthor}}\par
+ \vskip3em
+ {\Large\vbox{%
+  \IfLanguageName{english}{
+   submitted to the Faculty of Mathematics, Computer \\
+   Science and Physics of the University of Innsbruck
+   \vskip2em
+   in partial fulfillment of the requirements \\
+   for the degree of \degreename
+  }{
+   eingereicht an der \\
+   Fakult\"at f\"ur Mathematik, Informatik und Physik \\
+   der Universit\"at Innsbruck
+   \vskip2em
+   zur Erlangung des akademischen Grades \\
+   \degreename
+  }
+ }}\par
+ \vfill
+ {\Large
+  \vbox{
+  \ifx\@supervisors\@empty
+  \IfLanguageName{english}{%
+   \expandafter\lowercase\expandafter{\supervisorname}%
+  }{\supervisorname}%
+  : \@supervisor\\\mbox{\@institute}
+ \else
+  \IfLanguageName{english}{%
+   \expandafter\lowercase\expandafter{\supervisorsname}%
+  }{\supervisorsname}%
+  : 
+  {
+   \def\and{, }
+    \@supervisors
+    \\
+   \mbox{\@institute}
+  }
+ \fi
+ }}\par
+ \vfill
+ {\Large\textbf{Innsbruck, \@date}}
+ \end{center}
+%</clm>
+%<*clp>
+ \renewcommand\supervisorsname{advisors}
+ \renewcommand\supervisorname{advisor}
+ \setcounter{page}{#1}
+ \pagestyle{empty}
+ \begin{center}
+ {\huge\textbf{\@plaintitle}\par}
+ \vskip3em
+ {\Large\textbf{%
+  \IfLanguageName{english}{%
+   dissertation
+  }{%
+   Doktorarbeit in der Studienrichtung Informatik
+  }
+ }}
+ \vskip3em
+ {\Large \IfLanguageName{english}{by}{von}}
+ \vskip3em
+ {\LARGE\textbf{\@plainauthor}}\par
+ \vskip3em
+ {\Large\vbox{%
+  \IfLanguageName{english}{
+   submitted to the Faculty of Mathematics, Computer \\
+   Science and Physics of the University of Innsbruck
+   \vskip2em
+   in partial fulfillment of the requirements \\
+   for the degree of \degreename
+  }{
+   eingereicht an der \\
+   Fakult\"at f\"ur Mathematik, Informatik und Physik \\
+   der Universit\"at Innsbruck
+   \vskip2em
+   zur Erlangung des akademischen Grades \\
+   \degreename
+  }
+ }}\par
+ \vfill
+ {\Large
+  \vbox{
+  \ifx\@supervisors\@empty
+  \IfLanguageName{english}{%
+   \expandafter\lowercase\expandafter{\supervisorname}%
+  }{\supervisorname}%
+  : \@supervisor
+ \else
+  \IfLanguageName{english}{%
+   \expandafter\lowercase\expandafter{\supervisorsname}%
+  }{\supervisorsname}%
+  : 
+  {
+   \def\and{, }
+    \@supervisors
+  }
+ \fi
+ }}\par
+ \vfill
+ {\Large\textbf{Innsbruck, \@date}}
+ \end{center}
+%</clp>
+\frontmatter
+%<clb|cls>\newgeometry{hmargin=3cm}
+ \thispagestyle{empty}
+ \let\footnotesize\small
+ \let\footnoterule\relax
+ \let\footnote\thanks
+ \renewcommand*\thefootnote{\@fnsymbol\c@footnote}%
+ \let\@oldmakefnmark\@makefnmark
+ \renewcommand*{\@makefnmark}{\rlap\@oldmakefnmark}
+ \newbox\unibox
+ \setbox\unibox=\hbox{\kern-5.1mm\includegraphics[width=55mm]{logos/unilogo.pdf}}
+ \hbox to \textwidth{%
+   \rlap{\box\unibox}
+   \hfill
+ }
+ {\raggedleft
+ \ifx\@subject\@empty \else
+  {\bigskip\Large \@subject \par}
+  \vskip 3em
+ \fi
+ {\titlefont\huge \@title\par}
+ \vskip 3em
+ {\Large \lineskip 0.75em
+ \begin{tabular}[t]{r@{}}
+  \@author{}
+  \ifx\@matriculationnumber\@empty{}\else(\@matriculationnumber)\fi \\
+  \href{mailto:\@mailaddress}{\texttt{\@mailaddress}}
+ \end{tabular}\par}
+ \vskip 1.5em
+ {\Large \@date \par}
+ \vskip \z@ \@plus3fill
+ {\Large \@publishers \par}
+ }
+%<*cls|clt|howto>
+ \vskip 3em
+ \null\vfill
+ \@beginparpenalty\@lowpenalty
+ \centerline{\normalfont\sectfont\nobreak\abstractname}
+ \@endparpenalty\@M
+ \par
+ \unhbox\absbox
+ \par
+%</cls|clt|howto>
+ \vskip 3em
+ \@thanks
+ \vfill\null
+ \setcounter{footnote}{0}%
+ \global\let\thanks\relax
+ \global\let\maketitle\relax
+ \global\let\@thanks\@empty
+ \global\let\@author\@empty
+ \global\let\@date\@empty
+ \global\let\@title\@empty
+ \global\let\@extratitle\@empty
+ \global\let\@titlehead\@empty
+ \global\let\@subject\@empty
+ \global\let\@publishers\@empty
+ \global\let\@uppertitleback\@empty
+ \global\let\@lowertitleback\@empty
+ \global\let\@dedication\@empty
+ \global\let\author\relax
+ \global\let\title\relax
+ \global\let\extratitle\relax
+ \global\let\titlehead\relax
+ \global\let\subject\relax
+ \global\let\publishers\relax
+ \global\let\uppertitleback\relax
+ \global\let\lowertitleback\relax
+ \global\let\dedication\relax
+ \global\let\date\relax
+ \global\let\and\relax
+ \clearpage
+%<clb|cls>\restoregeometry
+%<*clb|clm|clp>
+\cleardoublepage
+\chapter*{Eidesstattliche Erkl{\"a}rung} 
+\thispagestyle{empty}
+
+Ich erkl{\"a}re hiermit an Eides statt durch meine eigenh{\"a}ndige Unterschrift,
+dass ich die vorliegende Arbeit selbst{\"a}ndig verfasst und keine anderen
+als die ange\-gebenen Quellen und Hilfsmittel verwendet habe. Alle Stellen,
+die w{\"o}rtlich oder inhaltlich den angegebenen Quellen entnommen wurden,
+sind als solche kenntlich gemacht.
+
+\noindent
+%<*clb>
+Ich erkl{\"a}re mich mit der Archivierung der vorliegenden
+\foreignlanguage{ngerman}{\kindname}
+einverstanden. 
+%</clb>
+%<*clm|clp>
+Die vorliegende Arbeit wurde bisher in gleicher oder {\"a}hnlicher Form noch
+nicht als Magister-/Master-/Diplomarbeit/Dissertation eingereicht. 
+%</clm|clp>
+
+\vspace{2cm}
+
+\noindent\mbox{}
+  \hskip 0pt plus .25fill
+  \hrulefill
+  \hskip 0pt plus .5fill
+  \hrulefill
+  \hskip 0pt plus .25fill
+\mbox{}
+\\
+\noindent\mbox{}
+  \hskip 0pt plus .25fill
+  Datum
+  \hskip 0pt plus .5fill
+  Unterschrift
+  \hskip 0pt plus .25fill
+\mbox{}
+\cleardoublepage
+%</clb|clm|clp>
+}}
+%    \end{macrocode}
+% \subsubsection{Table of Contents}
+% \DescribeMacro{\tableofcontents}
+% Immediately after the ToC the mainmatter starts
+% and also headings are printed.
+%    \begin{macrocode}
+\let\@OLDtableofcontents\tableofcontents
+\renewcommand\tableofcontents{%
+%<*cls|clt|howto>
+ \pagestyle{plain}
+%</cls|clt|howto>
+%<*clb|clm|clp>
+ \thispagestyle{empty}
+ \cleardoublepage
+ \begin{center}
+ \normalfont\sectfont\nobreak\abstractname
+ \@endparpenalty\@M
+ \end{center}
+ \unhbox\absbox
+ \par\vfil\null
+ \ifx\@acknowledgments\@empty{}\else
+  \cleardoublepage
+  \chapter*{\ackname}
+  \@acknowledgments
+  \cleardoublepage
+ \fi
+%</clb|clm|clp>
+ \@OLDtableofcontents
+%<clb|clm|clp>\cleardoublepage
+%<cls|clt|howto>\newpage
+ \mainmatter
+%<*clb|clm|clp|cls|clt> 
+ \pagestyle{fancy}
+ \fancyhead{}
+ \fancyfoot{}
+%</clb|clm|clp|cls|clt> 
+%<*clb|clm|clp>
+ \renewcommand\chaptermark[1]{\markboth{\thechapter\ ##1}{}}
+ \renewcommand\sectionmark[1]{\markright{\thesection\ ##1}}
+ \renewcommand\headrulewidth{0.5pt}
+%</clb|clm|clp>
+%<*cls|clt|howto>
+ \renewcommand\sectionmark[1]{\markboth{\thesection\ ##1}{}}
+ \renewcommand\subsectionmark[1]{\markright{\thesubsection\ ##1}}
+ \renewcommand\headrulewidth{0pt}
+%</cls|clt|howto>
+%<*clb|clm|clp|cls|clt> 
+ \fancyhead[LE]{\leftmark}
+ \fancyhead[RO]{\rightmark}
+ \fancyfoot[LE,RO]{\thepage}
+%</clb|clm|clp|cls|clt> 
+}
+%    \end{macrocode}
+% \subsection{The End}
+%    \begin{macrocode}
+\endinput
+%    \end{macrocode}
+%
+% \Finale
+%

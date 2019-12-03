@@ -231,8 +231,8 @@ def getFormula(startingstate, steps):
     tmp = stateToZ3State(startingstate, 1)
     tmp2 = False;
     for i in range(steps):
-        tmp = And(tmp,combineTransitions(stateMatrix[i], stateMatrix[i+1], dim), isState(stateMatrix[i]))
-        tmp2 = Or(tmp2, isFinalStateFormula(stateMatrix[i]))
+        tmp = simplify(And(tmp,combineTransitions(stateMatrix[i], stateMatrix[i+1], dim), isState(stateMatrix[i])))
+        tmp2 = simplify(Or(tmp2, isFinalStateFormula(stateMatrix[i])))
         #if(i > 0):
         #tmp = And(tmp, Not(isEqualState(stateMatrix[i-1], stateMatrix[i+1]))) # Check if last two steps cancle eachother out. (Moving the empty tile back and forth)
 
@@ -298,13 +298,13 @@ def getSolutionSequence(state, steps):
 	print(solutionSequence)
 
 	return solutionSequence
-	
+
 
 # -------------------------------------------------------- testPrints --------------------------------------------------------
 #print(stateToZ3State(state, 0))
 #printStateMatrix(generateStateMatrix(9, 20))
 #print(isState(testState))
-#print(isFinalState(testState))
+#print(isFinalStateFormula(testState))
 
 #print(isStateMatrix(generateStateMatrix(9,10)))
 
@@ -322,3 +322,4 @@ def getSolutionSequence(state, steps):
 # s.add(And(stateToZ3State(state,1),isState(testState), isState(testState_2), fillerTransitions(testState, testState_2, 3)))
 # print(s.check())
 # print(s.model())
+# solveNPuzzle(state, 1)
