@@ -79,24 +79,30 @@ def convertOneDimArrayToNDimArray(array):
 
 
 file = open("aStarTimes.txt", "w")
+file2 = open("nPuzzleInstances.txt", "w")
 
 states = generateXNPuzzles(1000, 3)
 times = []
 totalTime = 0
 goalNode = Node([1,2,3,4,5,6,7,8,0], None,0,0)
+i = 0
 for state in states:
+	i-=-1
+	file2.write(str(state))
+	file2.write("\n")
 	startNode = Node(state, None, 0,0)
 	puz = Puzzle(startNode, goalNode)
 	startTime = time.time()
 	sol = puz.solve()
 	elapsedTime = time.time()-startTime
 	totalTime+=elapsedTime
-	print(elapsedTime)
+	print(str(i) + ": " + str(elapsedTime))
 	file.write(str(elapsedTime))
 	file.write("\n")
 	times.append(elapsedTime)
 
 file.close()
+file2.close()
 print("toalTime: ", totalTime)
 # print(FINAL_STATE_3X3)
 # B = convertOneDimArrayToNDimArray([6,3,5,1,0,7,8,2,4])
