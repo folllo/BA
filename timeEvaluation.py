@@ -9,9 +9,15 @@ countSmallerThanZero = len([i for i in times if int(i) == 0])
 countBtwZeroAndTen = len([i for i in times if  10 > int(i) > 0])
 countBtwTenAndOnehundred = len([i for i in times if 100 > int(i) >= 10])
 countLargerThanOnehundred = len([i for i in times if int(i) >= 100])
+countLargerThanOnethousand = len([i for i in times if int(i) >= 1000])
 
 print(len(times))
 print("x <= 0:        ", countSmallerThanZero)
 print("0 < x < 10:    ", countBtwZeroAndTen)
 print("10 <= x < 100: ", countBtwTenAndOnehundred)
 print("x >= 100:      ", countLargerThanOnehundred)
+print("x >= 1000:     ", countLargerThanOnethousand)
+
+for time in times:
+	if(int(time) >= 1000):
+		print(time)
