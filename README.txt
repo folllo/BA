@@ -1,7 +1,8 @@
 How to setup The App to run:
+!! I tested it on Ubuntu 16.04  should run on higher versions too though!!
 
 Prequisites:
-- I tested it on Ubuntu 16.04
+
 - git installed:
 	sudo apt-get install git
 
@@ -14,7 +15,9 @@ Prequisites:
 - z3 solver installed:
 	pip3 install z3-solver
 
+Setup:
 - Clone git repository at: https://github.com/folllo/BA
+
 - Everything needed to run the app is located in NPuzzleProject because the rest of the repository is quite a mess 
 
 To run the app:
@@ -28,4 +31,6 @@ To run the app:
 	flask run
 
 - open browser and go to "http://127.0.0.1:5000" or "localhost:5000"
+
+- play ;)
 
