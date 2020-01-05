@@ -1,0 +1,439 @@
+\documentclass{clbthesis}
+\usepackage[utf8]{inputenc}
+\usepackage{logicpuzzle}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\graphicspath{ {./images/} }
+
+\newenvironment{fifteen}[1][]{%
+\begin{logicpuzzle}[rows=4,columns=4,#1]
+\begin{puzzleforeground}
+\framepuzzle
+\end{puzzleforeground}
+}{\end{logicpuzzle}}
+
+\newenvironment{eight}[1][]{%
+\begin{logicpuzzle}[rows=3,columns=3,#1]
+\begin{puzzleforeground}
+\framepuzzle
+\end{puzzleforeground}
+}{\end{logicpuzzle}}
+
+\mathchardef\mhyphen="2D
+
+\newcommand{\shiftright}[2]{\makebox[#1][r]{\makebox[0pt][l]{#2}}}
+\def\ArrowFour{\shiftright{50pt}{\raisebox{-.5\height}{\scalebox{2}{$\Rightarrow$}}}}
+\def\ArrowThree{\shiftright{35pt}{\raisebox{-.5\height}{\scalebox{2}{$\Rightarrow$}}}}
+
+\usepackage[
+backend=biber,
+style=alphabetic,
+sorting=ynt
+]{biblatex}
+ 
+\addbibresource{bibliography.bib}
+
+\title{15 Puzzle}
+\author{Florian Stalzer}
+\mailaddress{florian.stalzer@student.uibk.ac.at}
+\date{\today}
+\supervisor{Sarah Winkler}
+
+\begin{document}
+
+\maketitle
+\abstract{
+The 15 puzzle invented by Noyes Chapman is a grid based logic puzzle. In this bachelor thesis the possibility of using a SAT based solver for solving such puzzles is explored and compared to a more common approach using a tree search algorithm. Furthermore a user friendly, web based application is implemented to generate, play and solve said puzzles.
+}
+\tableofcontents
+\chapter{Introduction}
+The 15 puzzle (also known as $N$-puzzle) is a grid based logic puzzle invented by Noyes Chapman\cite{mathworld} around 1880. The board of this game consists of $N-1$ tiles numbered from one through $N-1$ and one empty space so you can move the tiles around. Objective of the game is to bring said tiles in ascending order starting from left to right starting from the top with the empty space ending up in the bottom right as shown in Figure \ref{fig:n_puzzle_goal}. This thesis explores the possibility of using a SAT based approach to solving such puzzles and compares it to a more common approach.
+\begin{figure}[!h]
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{13,10,11,6}
+            \setrow{3}{5,7,4,8}
+            \setrow{2}{1,12,14,9}
+            \setrow{1}{3,15,2,}
+        \end{fifteen}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \ArrowFour{}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{1,2,3,4}
+            \setrow{3}{5,6,7,8}
+            \setrow{2}{9,10,11,12}
+            \setrow{1}{13,14,15,}
+        \end{fifteen}
+    \end{minipage}
+    \caption{Unsolved (left) and solved (right) instance of the 15-puzzle.}
+    \label{fig:n_puzzle_goal}
+\end{figure}
+\section{Goals}
+This thesis covers mostly puzzles of sizes 3x3 and 4x4. Excluding the generator and user interface which would theoretically work for puzzles of all sizes.
+\paragraph{Generator}
+The first goal of this thesis is to implement a generator for puzzles of a given size $N$. This generator should only generate valid puzzles. This is important because there are possible configurations of the board which can not be solved. 
+\paragraph{SAT solver}
+The next objective was to implement a logic based solver using SAT encodings and bounded model checking. 
+\paragraph{User interface}
+Finally a graphical user interface was implemented which generates puzzles of size 3x3, 4x4 and 5x5. It is also possible to receive hints coming from the solver. 
+\chapter{15 Puzzle}
+The "15 puzzle" is an instance of the $N$-puzzle. A grid based logic puzzle invented by Noyes Chapman around 1880. It consists of a $\sqrt{N+1}$ by $\sqrt{N+1}$ grid with $N$ tiles numbered from one to $N$ and one empty space.
+\section{Rules}
+Starting from a scrambled board, the goal of the puzzle is to arrange the numbered tiles in order from one to $N$ row by row, with the empty tile being in the bottom right of the grid as shown in Figure \ref{fig:n_puzzle_goal}. 
+To get to from a given starting configuration to the final state, tiles neighboring the empty space can be moved horizontally or vertically but not diagonally as illustrated in Figure \ref{fig:transition_example}.
+\begin{figure}[!h]
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{7,6,13,15}
+            \setrow{3}{10,5,4,14}
+            \setrow{2}{8,,\textbf{3},1}
+            \setrow{1}{2,11,9,12}
+        \end{fifteen}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \ArrowFour{}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{7,6,13,15}
+            \setrow{3}{10,5,4,14}
+            \setrow{2}{8,\textbf{3},,1}
+            \setrow{1}{2,11,9,12}
+        \end{fifteen}
+    \end{minipage}
+    \caption{Example of a legal move for 15-Puzzles.}
+    \label{fig:transition_example}
+\end{figure}
+\section{Human Solving approach}
+The following is a common strategy for solving the 15-puzzle by hand.
+\begin{description}
+\item[Step 1:] Move tile one and two into their final position [\ref{fig:hmn_step_one}].
+\begin{figure}
+    \centering
+    \begin{fifteen}
+        \setrow{4}{\textbf{1},\textbf{2},13,4}
+        \setrow{3}{3,,6,9}
+        \setrow{2}{7,5,14,12}
+        \setrow{1}{10,8,11,15}
+    \end{fifteen}
+    \caption{Step 1.}
+    \label{fig:hmn_step_one}
+\end{figure}
+\item[Step 2:] Move tile three and four into setup position followed by moving them into their final position [\ref{fig:hmnStep2}].
+\begin{figure}
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{1,2,\textbf{4},}
+            \setrow{3}{7,14,\textbf{3},9}
+            \setrow{2}{5,12,13,6}
+            \setrow{1}{10,8,11,15}
+        \end{fifteen}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \ArrowFour{}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{1,2,\textbf{3},\textbf{4}}
+            \setrow{3}{7,14,9,}
+            \setrow{2}{5,12,13,6}
+            \setrow{1}{10,8,11,15}
+        \end{fifteen}
+    \end{minipage}
+    \caption{Setup position (left) and finished first row (right).}
+    \label{fig:hmnStep2}
+\end{figure}
+\item[Step 3:] Repeat steps one and two for tiles five to eight to solve the second row [\ref{fig:hmnStep3}].
+\begin{figure}
+    \centering
+    \begin{fifteen}
+        \setrow{4}{1,2,3,4}
+        \setrow{3}{\textbf{5},\textbf{6},\textbf{7},\textbf{8}}
+        \setrow{2}{12,11,,13}
+        \setrow{1}{10,14,9,15}
+    \end{fifteen}
+    \caption{Solved second row.}
+    \label{fig:hmnStep3}
+\end{figure}
+\item[Step 4:] Continue by solving the final two rows column by column. Bring tiles nine and 13 into setup position followed by moving them into their final spots [\ref{fig:hmnStep4}].
+\begin{figure}
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{1,2,3,4}
+            \setrow{3}{5,6,7,8}
+            \setrow{2}{\textbf{13},\textbf{9},,15}
+            \setrow{1}{10,14,12,11}
+        \end{fifteen}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \ArrowFour{}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{1,2,3,4}
+            \setrow{3}{5,6,7,8}
+            \setrow{2}{\textbf{9},,12,15}
+            \setrow{1}{\textbf{13},10,14,11}
+        \end{fifteen}
+    \end{minipage}
+    \caption{Setup position (left) and finished first column (right).}
+    \label{fig:hmnStep4}
+\end{figure}
+\item[Step 5:] Repeat step four for tiles 10 and 14 [\ref{fig:hmnStep5}].
+\begin{figure}
+    \centering
+    \begin{fifteen}
+        \setrow{4}{1,2,3,4}
+        \setrow{3}{5,6,7,8}
+        \setrow{2}{9,\textbf{10},12,15}
+        \setrow{1}{13,\textbf{14},,11}
+    \end{fifteen}
+    \caption{Solved second column.}
+    \label{fig:hmnStep5}
+\end{figure}
+\item[Step 6:] Finish the puzzle by rotating the last three tiles until they are in their final position [\ref{fig:hmnStep6}].
+\begin{figure}
+    \centering
+    \begin{fifteen}
+        \setrow{4}{1,2,3,4}
+        \setrow{3}{5,6,7,8}
+        \setrow{2}{9,10,\textbf{11},\textbf{12}}
+        \setrow{1}{13,14,\textbf{15},}
+    \end{fifteen}
+    \caption{Solved puzzle.}
+    \label{fig:hmnStep6}
+\end{figure}
+\end{description}
+\chapter{Common Solving Approach}
+For solving the $N$-puzzle it can be helpful to visualize moving the empty space around instead of moving the tiles. It is possible for the empty space to switch position with one of its neighboring tiles horizontally and vertically but not diagonally. For further explanation I will use instances of the 15-puzzle and 8-puzzle as examples.
+
+\section{Tree Search based Solving approach}
+A common approach for solving different puzzles is the A* algorithm, often used for path finding and graph traversal. A* is one of many informed search algorithms, which means it uses a heuristic function to to increase its chances of finding a solution. The heuristic function provides a heuristic value, which helps the algorithm to find a path that leads to a solution as fast as possible. The heuristic value ($f\mhyphen score$) consists of the number of nodes traveled so far ($g\mhyphen score$) and the number of misplaced tiles of the current state compared to the final state ($h\mhyphen score$). You cab observe a sequence of the A* algorithm in Figure \ref{fig:8puzzleA*}.
+
+\[f\mhyphen score = h\mhyphen score + g\mhyphen score\]
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{AStar_example.png}
+    \caption{8-puzzle example for the A* algorithm.}
+    \label{fig:8puzzleA*}
+\end{figure}
+
+The main feature of the A* algorithm however is that it keeps track of all visited nodes. This way it can ignore paths it already explored, which saves a lot of time.
+
+\chapter{Solver}
+\section{Approach}
+To implement a SAT based solver for any given puzzle we have to translate the rules of the puzzle into logic formulas. In case of the $N$-puzzle we encode all possible transitions and some basic constraints into SAT and pass them to an existing SAT solver to retrieve a solution. For this thesis the Z3 solver was used. A state-of-the-art SAT solver developed by Microsoft Research \cite{z3solver}, more specifically the Z3 library for Python called Z3Py.
+To translate the rules to SAT we imagine the puzzle as a grid of variables nubered from $0$ to $N-1$ from the top left to the bottom right. It is of advantage to imagine moving the empty tile around instead of moving one of the numbered tiles. All further formulas are built based on these assumptions. For simplicity reasons all the following formulas are going to be for instances of the 8-puzzle.
+\begin{figure}
+    \begin{minipage}{0.3\textwidth}
+        \begin{eight}
+            \setrow{3}{$x_0$,$x_1$,$x_2$}
+            \setrow{2}{$x_3$,$x_4$,$x_5$}
+            \setrow{1}{$x_6$,$x_7$,$x_8$}
+        \end{eight}
+    \end{minipage}
+    \begin{minipage}{0.3\textwidth}
+        \ArrowThree{}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \begin{eight}
+            \setrow{3}{$y_0$,$y_1$,$y_2$}
+            \setrow{2}{$y_3$,$y_4$,$y_5$}
+            \setrow{1}{$y_6$,$y_7$,$y_8$}
+        \end{eight}
+    \end{minipage}
+    \caption{State transition variables from state $X$ to state $Y$.}
+    \label{fig:transition_with_variables}
+\end{figure}
+\section{Basic Constraints}
+The first basic constraint is there to make sure every state is valid by checking if all Values are non negative,distinct and between zero and eight. To achieve this we add the following formula for every state $X$ and call it $isState(X)$:
+
+\[(x_0 \neq x_1 \neq x_2 \neq \ldots \neq x8) \land ((0 <= x_0 < 9) \land (0 <= x_1 < 9) \land \ldots \land (0 <= x_8 < 9)) \]
+
+Another simple constraint checks if a given state $X$ is the final state and is called $isFinalState(X)$:
+
+\[(x_0 = 1 \land x_1 = 2 \land x_2 = 3 \land x_3 = 4 \land x_4 = 5 \land x_5 = 6 \land x_6 = 7 \land x_7 = 8 \land x_8 = 0)\]
+
+To make sure tiles are not swapped back and forth over and over again another constraint is to check if the penultimate step is not the same state as the current one. To achieve this we just have to check if the current state $X$ is equal to state $Z$ which comes after the state $Y$. This constraint is called $notEquals(X, Z)$:  
+
+\[(x_0 \neq z_0 \land x_1 \neq z_1 \land \ldots \land x_8 \neq z_8)\]
+
+All of these basic constraints are applied to every state transition.
+
+\section{Transitions}
+The $N$-puzzle consists of three types of transitions as shown in Figure \ref{fig:transitionPositions}. Corner transitions, where the empty tile is located in one of the four corners of the puzzle. Edge transitions, where the empty tile is located at top, left, right or bottom edge of the puzzle and not at one of the corners. Finally there are filler transitions which apply to all positions that are not a corner or edge transition.
+\begin{figure}
+    \centering
+    \includegraphics[width=0.9\textwidth]{images/TransitionPositions.png}
+    \caption{Possible state transitions.}
+    \label{fig:transitionPositions}
+\end{figure}
+\subsection{Corner Transitions}
+Corner transitions consist of only two possible moves and therefore result in the shortest formulas. If the empty space is in the top left for example it can only be moved to the right or downwards. For a state $X$ transitioning to a state $Y$, if we want to express this as a formula, for a puzzle of size nine, we would end up with the following formula and call it $topLeftTransition(X, Y)$:
+
+\begin{align*}
+    (x_0 = y_1 \land x_1 = y_0 \land x_2 = y_2 \land x_3 = y_3 \land x_4 = y_4 \land \ldots \land x_8 = y_8)\lor{}\\ 
+    (x_0 = y_4 \land x_4 = y_0 \land x_1 = y_1 \land x_2 = y_2 \land x_3 = y_3 \land x_5 = y_5 \land \ldots \land x_8 = y_8)
+\end{align*}
+
+The first conjunction represents moving the empty tile to the right and the other one moving it downwards as shown in Figure \ref{fig:cornerTransitionExample}. There are three more corner transitions for each corner other then top left. Those transitions are called $topRightTransition(X, Y)$, $bottomLeftTransition(X, Y)$ and $bottomRightTransition(X, Y)$:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/corner_trainsition_example.png}
+    \caption{Visual representation of the example formula for corner transitions.}
+    \label{fig:cornerTransitionExample}
+\end{figure}
+
+\subsection{Edge Transitions}
+Edge transitions have 3 possible transitions. In a 3x3 puzzle for example if we look at the left center position as the position of our empty space, the possible transitions are moving it up, down or right. Taking this state as a starting point for our transition from state $X$ to state $Y$, if we want to express this as a formula it would look like the following and called $leftColumnTransition(X, Y)$:
+
+\begin{align*}
+    (x_0 = y_3 \land x_1 = y_1 \land x_2 = y_2 \land x_3 = y_0 \land x_4 = y_4 \land x_5 = y_5 \land \ldots \land x_8 = y_8)\lor{}\\
+    (x_0 = y_0 \land x_1 = y_1 \land x_2 = y_2 \land x_3 = y_4 \land x_4 = y_3 \land x_5 = y_5 \land \ldots \land x_8 = y_8)\lor{}\\
+    (x_0 = y_0 \land \ldots \land x_2 = y_2 \land x_3 = y_6 \land x_4 = y_4 \land x_5 = y_5 \land x_6 = y_3 \land x_7 = y_7 \land x_8 = y_8) 
+\end{align*}
+
+The first line expresses moving the empty space upwards, the second one to the right and the final one represents moving it downwards as shown in Figure \ref{fig:edgeTransitionExample}. The equivalent expressions for the other edges are called $rightColumnTransition(X, Y)$, $topRowTransition(X, Y)$ and $bottomRowTransition(X, Y)$.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/edge_transition_example.png}
+    \caption{Visual representation of the example formula for edge transitions.}
+    \label{fig:edgeTransitionExample}
+\end{figure}
+
+\subsection{Filler Transitions}
+Filler transitions result in the biggest formulas because for them the empty space can move in every direction. In a 3x3 puzzle there is only a single filler transition, the center one. If we take the center space of a 3x3 board as an example for our transition from state $X$ to state $Y$ we end up with the following expression named $fillerTransition(X, Y)$:
+
+\begin{align*}
+    (x_0 = y_0 \land x_1 = y_4 \land x_2 = y_2 \land x_3 = y_3 \land x_4 = y_1 \land x_5 = y_5 \land x_6 = y_6 \land \ldots \land x_8 = y_8)\lor{}\\
+    (x_0 = y_0 \land x_1 = y_1 \land x_2 = y_2 \land x_3 = y_4 \land x_4 = y_3 \land x_5 = y_5 \land x_6 = y_6 \land \ldots \land x_8 = y_8)\lor{}\\
+    (x_0 = y_0 \land x_1 = y_1 \land x_2 = y_2 \land x_3 = y_3 \land x_4 = y_5 \land x_5 = y_4 \land x_6 = y_6 \land \ldots \land x_8 = y_8)\lor{}\\
+    (x_0 = y_0 \land x_1 = y_1 \land \ldots \land x_3 = y_3 \land x_4 = y_7 \land x_5 = y_5 \land x_6 = y_6 \land x_7 = y_4 \land x_8 = y_8)
+\end{align*}
+
+The above formulas represent the following movement in order from top to bottom. Up, left, right and down as represented in Figure \ref{fig:fillerTransitionExample}.If we calculate the number of resulting formulas for all filler transitions for puzzles of size $N$ we get $(N-2)*4$ formulas which scales exponential with the size of $N$.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{images/filler_transition_example.png}
+    \caption{Visual representation of the example formula for filler transitions.}
+    \label{fig:fillerTransitionExample}
+\end{figure}
+\subsection{Finite Model Checking}
+In finite model checking we try to find a solution for our problem in a finite amount of steps, where, in our case, one step is equivalent to moving the empty space once. As explained by \cite{nPuzzleSteps} it is possible to solve every instance of the 8-puzzle in no more then 31 steps. We can use this as our upper bound for checking solvability of our model. To generate the expression we want to solve we first have to generate at most 31 states for the 8-puzzle and fill those states with integer variables from $X_0$ to $X_8$. Those variables represent the positions on the board of a given state $X$ as shown in Figure \ref{fig:transition_with_variables}.
+
+\chapter{Application}
+The following section covers another goal of this Thesis. Implementing a web based user interface to generate, play and solve instances of the $N$-puzzle. 
+\section{Technologies}
+To implement the web based application a python based framework for web application. It supports rest services out of the box which was used to incorporate the solver into the web app. For the GUI a mixture HTML, CSS, JavaScript and JQuery was used.  
+\section{GUI}
+The GUI consists of two main areas. The main area of the web app which contains the playing board. It consists of a fixed size square filled with the movable tiles for actually playing the game. If a tile is next to the empty space it can be clicked to move it to the empty space. Below the square playing board there is a text field displaying different messages according to the game state. If the game is finished for example it will state "YOU WON!" as shown in Figure \ref{fig:app_solved}.
+\paragraph{}The second area is the header. Here you can find an array of buttons with the following functionalities from left to right. The first one is for shuffling the playing board. This will trigger the $N$-puzzle generator which will generate a random instance for the selected puzzle size and check if it is a solvable instance. The second button shows the currently selected size of the puzzle and can be clicked to change said size. Possible options are 3x3, 4x4, and 5x5. Theoretically the application could deal with puzzles of any size but after 5x5 the tiles get too small for comfortable playing. On click the app cycles through before mentioned sizes. The third button labeled "Hint" is used to get a hint for the current state of the game. On click the puzzle will automatically do one move by itself which transitions the puzzle to a state one step closer to a solution. To achieve this, the solver is called in the background which in turn solves the puzzle completely and returns one single step closer to the final state.
+\paragraph{} In the top right corner of the page, inside the header, there is a display which shows how many moves were made and how much time has passed since shuffling the board. The counter for the moves and the time will stop automatically as soon as the puzzle is solved.
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/app_shuffled.png}
+    \caption{Shuffled example of a 8-puzzle.}
+    \label{fig:app_shuffled}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{images/app_solved.png}
+    \caption{Solved example of a 24-puzzle.}
+    \label{fig:app_solved}
+\end{figure}
+\section{Service}
+To provide the solving functionality to the GUI a REST service was implemented using the flask framework. This way the frontend can get a solution through a simple http request. The rest endpoint is connected to the implementation of the SAT solver. It receives the current state of the puzzle displayed in the GUI from the request, passes it to the solver and returns the solution through its response.
+\section{Puzzle Generator}
+The implementation of a $N$-puzzle generator is quite simple. First a start configuration of the board is generated by shuffling the tiles around randomly. Because this can result in puzzle instances that are not solvable, we have to check if this particular random instance has a solution. To achieve this we apply a simple algorithm which will be explained at a later point.
+If the algorithm returns a negative result we re randomize the board and check again until we find a valid configuration of tiles.
+\subsection{N-puzzle Solvability Algorithm}
+\begin{figure}
+    \centering
+        \begin{eight}
+        \setrow{3}{1,8,2}
+        \setrow{2}{,4,3}
+        \setrow{1}{7,6,5}
+    \end{eight}
+    \begin{eight}
+        \setrow{3}{8,1,2}
+        \setrow{2}{,4,3}
+        \setrow{1}{7,6,5}
+    \end{eight}
+    \caption{Solvable instance (left) and unsolvable instance (right)}
+    \label{fig:solvability_example}
+\end{figure}
+To determine if a given instance of the $N$-puzzle is solvable we have to apply a simple rule to it. If the number of inversions for the instance is odd it is not possible to solve the puzzle. In the examples in Figure \ref{fig:solvability_example} the first instance has 10 inversions and is therefore solvable. The second examples number of inversions is 11 and thus not solvable. So what are inversions. Inversions are the number of tiles where the value of the tiles are in reverse order in comparison to the goal state ignoring the empty tile. For the solvable instance shown in Figure \ref{fig:solvability_example} for example the following pairs are inversions:
+
+\[(8,2), (8,4), (8,3), (8,7), (8,6), (8,5), (4,3), (7,6), (7,5), (6,5)\]
+
+As stated before we can see that the resulting number of inversions is 10 and thus the instance is solvable \cite{solvabilityNPuzzle}.
+
+\chapter{Performance \& Analysis}
+Figure \ref{fig:eight_puzzle_a*_performance} shows the execution times of the A* algorithm in seconds on the x-axis and the number of puzzle instances on the y-axis. Due to some outliers the average execution time of my A* implementation is around one and a half minutes. In some cases solving an instance took over 30 minutes. As a result the average execution time for the A* algorithm was around 80 seconds. Excluding those anomalies about 87\% of all tested puzzle instances can be solved in under 15 seconds on average.
+
+\begin{figure}[!h]
+    \centering
+    \includegraphics[width=\textwidth]{images/aStarTimesGraph.pdf}
+    \caption{Execution times of the A*-algorithm for 1000 instances of the 8-puzzle.}
+    \label{fig:eight_puzzle_a*_performance}
+\end{figure}
+
+In comparison Figure \ref{fig:eight_puzzle_sat_performance} shows the execution times of the SAT solver for a fixed number of steps equal to 31. This number stems from the fact that every instance of the 8-puzzle can be solved in at worst that amount of steps \cite{nPuzzleSteps}. Again the x-axis represents the execution times in seconds and the y-axis shows the number of puzzle instances. As we can see there are no cases of extremely long execution times as there were using the A* algorithm. Thus the average execution time of the SAT solver was way better at around 25 second on average compared to the 80 seconds of the A* algorithm. This tells us that using a SAT solver for solving $N$-puzzles is more consistent compared to using the A* algorithm even for seemingly difficult instances of the puzzle. On the other hand the A* algorithm has way better best case execution times for easier instances of the puzzle of under one second. For the SAT solver only a small portion of solutions took under 10 seconds.
+
+\begin{figure} [!h]
+    \centering
+    \includegraphics[width=\textwidth]{images/satTimesGraph.pdf}
+    \caption{Execution times of the SAT solver for 1000 instances of the 8-puzzle using a fixed amount of 31 steps.}
+    \label{fig:eight_puzzle_sat_performance}
+\end{figure}
+
+The final test run used an increasing number of steps for solving the same instances as before with the following sequence:
+\[1, 2, 4, 8, 16, 21, 26, 31\]
+The theory behind using this approach is that most $N$-puzzle instances don't need 31 steps to be completed and using less steps results in a smaller expression which should be easier and faster to solve.
+
+\begin{figure} [!h]
+    \centering
+    \includegraphics[width=\textwidth]{images/satTimesGraphVariable.pdf}
+    \caption{Execution times of the SAT solver for 1000 instances of the 8-puzzle using a variable amount of steps.}
+    \label{fig:eight_puzzle_sat_performance}
+\end{figure}
+
+\chapter{Conclusion}
+The biggest issue with using a SAT solver for solving the $N$-puzzle is scalability. Because the size of the formula necessary for solving such a puzzle scales exponentially with the size of $N$.
+
+Possible improvements would be to save all possible transitions in a set and build the final formula out of it to avoid duplicate transitions which can occur because edge and filler and edge and corner cases can have overlapping transitions.
+
+
+\printbibliography
+\end{document}
+
+% ----------------- 15 puzzle transition template -------------------
+\begin{figure}[!h]
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{13,10,11,6}
+            \setrow{3}{5,7,4,8}
+            \setrow{2}{1,12,14,9}
+            \setrow{1}{3,15,2,}
+        \end{fifteen}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \ArrowFour{}
+    \end{minipage}\
+    \begin{minipage}{0.3\textwidth}
+        \begin{fifteen}
+            \setrow{4}{1,2,3,4}
+            \setrow{3}{5,6,7,8}
+            \setrow{2}{9,10,11,12}
+            \setrow{1}{13,14,15,}
+        \end{fifteen}
+    \end{minipage}
+    \caption{Unsolved (left) and solver (right) instance of the 15 puzzle.}
+\end{figure}
